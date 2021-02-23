@@ -1,0 +1,2 @@
+export const EVENTSAVED = "EVENTSAVED";
+export const EVENTSAVEFAIL = "EVENTSAVEFAIL";

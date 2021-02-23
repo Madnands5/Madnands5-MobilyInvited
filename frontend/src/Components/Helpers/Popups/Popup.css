@@ -1,0 +1,47 @@
+.modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 20000;
+}
+.modal-card {
+  background: #fff;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  box-shadow: 0 0 0 0 grey;
+  padding: 1em;
+  width: 300px;
+  height: auto;
+}
+.modal-page {
+  background: #fff;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  box-shadow: 0 0 0 0 grey;
+  padding: 1em;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: scroll;
+}
+.popup-close {
+  position: sticky;
+  left: 75%;
+  bottom: 23%;
+}
+.modal-title {
+  font-size: 26px;
+  font-weight: 400;
+}
+.modal-title-description {
+  font-size: 14px;
+  font-weight: 300;
+  margin: 0;
+}
+@media only screen and (max-width: 789px) {
+  .popup-close {
+    left: 90%;
+  }
+}
