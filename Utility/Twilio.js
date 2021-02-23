@@ -1,16 +1,20 @@
+const path = require("path");
 const dotenv = require("dotenv");
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
-const accountSid = "ACfc3b52e5d312d018b83cce1909433362";
-const authToken = "bab3136ec68dbbf4d12d1a7452302804";
-const vtoken = "VAcf44dc1c66afb01a0e014ab85514fa64";
+const accountSid = process.env.accountSid;
+const authToken = process.env.authToken;
+const vtoken = process.env.verifytoken;
 const client = require("twilio")(accountSid, authToken);
-
+let vid = "";
 const initverify = async (reciver, res) => {
-  console.log(reciver);
+  console.log(reciver, accountSid, authToken);
   await client.verify.services
     .create({ friendlyName: "Mob-inv" })
-    .then((service) => console.log(service.sid))
+    .then((service) => {
+      console.log(service.sid);
+      vid = service.sid;
+    })
     .catch((error) => {
       res.json({ status: "checked", response: error });
     });
@@ -20,7 +24,7 @@ const initverify = async (reciver, res) => {
     .verifications.create({ to: reciver, channel: "sms" })
     .then((verification) => {
       console.log(verification);
-      res.json({ status: "pending", response: verification });
+      res.json({ status: "pending", response: verification, vtoken });
     })
     .catch((error) => {
       res.json({ status: "checked", response: error });
@@ -28,7 +32,7 @@ const initverify = async (reciver, res) => {
 };
 const verifytoken = async (phone, code, res) => {
   await client.verify
-    .services("VAcf44dc1c66afb01a0e014ab85514fa64")
+    .services(vtoken)
     .verificationChecks.create({ to: phone, code: code })
     .then((verification_check) => {
       console.log(verification_check);

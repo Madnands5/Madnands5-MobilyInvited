@@ -29,6 +29,7 @@ export default function EventDetails(props) {
   const [shedulevisible, SetScheduleVisible] = useState(false);
   const [storyvisible, SetStoryVisible] = useState(false);
   const [albumvisible, SetAlbumVisible] = useState(false);
+  const [Location, setLocation] = useState("");
   useEffect(() => {
     if (props.Events[props.SelectedEvent] !== undefined) {
       SetCurrentEventDetails(props.Events[props.SelectedEvent]);
@@ -59,7 +60,12 @@ export default function EventDetails(props) {
       props.SelectEvent(result.index);
     }
   };
-
+  useEffect(() => {
+    SetCurrentEventDetails({
+      ...CurrentEventDetails,
+      Location: Location,
+    });
+  }, [Location]);
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
@@ -186,10 +192,10 @@ export default function EventDetails(props) {
           <Map
             SetCurrentEventDetails={SetCurrentEventDetails}
             CurrentEventDetails={CurrentEventDetails}
-            google={props.google}
             center={{ lat: 20.5937, lng: 78.9629 }}
             height="300px"
             zoom={12}
+            setLocation={setLocation}
           />
         </Grid>
       )}

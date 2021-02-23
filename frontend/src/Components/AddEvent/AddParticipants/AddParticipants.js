@@ -96,9 +96,9 @@ export default function AddParticipants(props) {
       await console.log(EventCpy[i]);
     }
     await props.setEvents(EventCpy);
-    await props.handleNext();
     console.log({ Events: props.Events });
     await dispatch(saveEvent({ Type: props.Type, Events: props.Events }));
+    await props.handleNext();
   };
 
   function SingleEventParticipants() {
