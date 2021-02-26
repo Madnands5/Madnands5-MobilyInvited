@@ -370,7 +370,7 @@ function Search({ panTo }, props) {
           value={value}
           onChange={handleInput}
           disabled={!ready}
-          placeholder={Location === "" ? "Search your location" : Location}
+          Placeholder="Search your location"
           className="locationSearch"
         />
         <ComboboxPopover>

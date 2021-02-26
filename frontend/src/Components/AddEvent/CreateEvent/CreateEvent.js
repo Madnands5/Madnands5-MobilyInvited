@@ -15,7 +15,7 @@ import AddImg from "../../../Assets/AddImage.svg";
 import Uploading from "../../../Assets/Uploading.svg";
 import EventDetails from "./EventDetails";
 import ImageSelectionModal from "./ImageSelectionModal";
-
+import "./CreateEvent.css";
 export default function CreateEvent(props) {
   const [disablesave, setDisablesave] = useState(false);
   const onDrop = useCallback((acceptedFiles) => {
@@ -66,6 +66,7 @@ export default function CreateEvent(props) {
           <option value="Birthdays">Birthdays</option>
           <option value="Wedding Anniversaries">Wedding Anniversaries</option>
           <option value="Get Together">Get Together</option>
+          <option value="Get Together">Formal Event</option>
         </Select>
       </FormControl>
       <div className="w-100-p grey">
@@ -114,13 +115,15 @@ export default function CreateEvent(props) {
       <Grid item xs={12} sm={12}>
         {props.Events[props.SelectedEvent] !== undefined &&
         props.Events[props.SelectedEvent].file === "" ? (
-          <img
-            src={AddImg}
-            className="w-100 m-5px"
-            onClick={() => {
-              toggleShowPopup(true);
-            }}
-          />
+          <center>
+            <img
+              src={AddImg}
+              className="add-Img"
+              onClick={() => {
+                toggleShowPopup(true);
+              }}
+            />
+          </center>
         ) : props.Events[props.SelectedEvent] !== undefined &&
           props.Events[props.SelectedEvent].filetype !== undefined ? (
           props.Events[props.SelectedEvent].filetype === "png" ||
@@ -137,8 +140,8 @@ export default function CreateEvent(props) {
               }}
               className={
                 processing === true
-                  ? "transparent uploaded-file"
-                  : "notTransparent uploaded-file"
+                  ? "transparent uploaded-file w-100"
+                  : "notTransparent uploaded-file w-100"
               }
             />
           ) : (
@@ -157,8 +160,8 @@ export default function CreateEvent(props) {
               preload="none"
               className={
                 processing === true
-                  ? " transparent w-100 m-b-5px "
-                  : "notTransparent  w-100 m-b-5px "
+                  ? " transparent w-100"
+                  : "notTransparent w-100"
               }
             />
           )
@@ -206,8 +209,10 @@ export default function CreateEvent(props) {
           checkIfEventEmpty={props.checkIfEventEmpty}
           setDisablesave={setDisablesave}
           disablesave={disablesave}
-          setAlbum={props.setAlbum}
+          albumdata={props.albumdata}
           setStory={props.setStory}
+          setalbumdata={props.setalbumdata}
+          Story={props.Story}
           template={props.template}
         />
       </Grid>

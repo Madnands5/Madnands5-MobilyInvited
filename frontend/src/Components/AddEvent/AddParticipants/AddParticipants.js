@@ -3,12 +3,14 @@ import Access from "../../../Assets/AddAccess.svg";
 import "../AddEvent.css";
 import { Grid, Switch } from "@material-ui/core";
 import readXlsxFile from "read-excel-file";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { saveEvent } from "../../../Redux/DispatchFuncitons/Eventfunctions";
 import { uploadString } from "../../../Utils/FileUpload_Download";
 import EventNameBox from "../CreateEvent/EventNameBox";
 export default function AddParticipants(props) {
   const dispatch = useDispatch();
+  const Eventdata = useSelector((state) => state.Eventdata);
+  console.log(Eventdata);
   let supported = "";
   let attribute = ["name", "tel"];
   const opts = { multiple: true };
@@ -16,6 +18,8 @@ export default function AddParticipants(props) {
   const [isMobile, SetIsMobile] = useState(false);
   const [selectedEvent, setselectedEvent] = useState(0);
   const [forallparticipants, setforallparticipants] = useState(true);
+  let Albumcpy = [];
+  let Storycpy = [];
   useEffect(async () => {
     supported = "contacts" in navigator && "ContactsManager" in window;
     console.log(supported);
@@ -82,23 +86,71 @@ export default function AddParticipants(props) {
   };
 
   const create_event = async () => {
-    let EventCpy = [...props.Events];
     debugger;
-    for (let i = 0; i < EventCpy.length; i++) {
-      let url =
-        EventCpy[i].MainCode +
-        "/" +
-        EventCpy[i].eventCode +
-        "." +
-        EventCpy[i].filetype;
-      let newurl = await uploadString(EventCpy[i].file, url);
-      EventCpy[i].file = newurl;
-      await console.log(EventCpy[i]);
-    }
+    let EventCpy = [...props.Events];
+    let MainCode = "";
+    EventCpy.map(async (even, index) => {
+      console.log(even);
+      MainCode = even.MainCode;
+      let furl = even.MainCode + "/" + even.eventCode + "." + even.filetype;
+      await console.log(furl);
+      let url = await uploadString(even.file, furl);
+      await console.log(url);
+      EventCpy[index].file = url;
+      if (even.Schedule.lenght > 0) {
+        let Schdulecpy = [...even.Schedule];
+        even.Schedule.map(async (sh, i) => {
+          let shurl =
+            even.MainCode +
+            "/" +
+            even.eventCode +
+            i +
+            "th_Schedule." +
+            sh.filetype;
+          let url = await uploadString(sh.file, shurl);
+          EventCpy[index].Schedule[i].file = url;
+        });
+
+        console.log(even.Schedule);
+      }
+    });
+
     await props.setEvents(EventCpy);
     console.log({ Events: props.Events });
-    await dispatch(saveEvent({ Type: props.Type, Events: props.Events }));
-    await props.handleNext();
+
+    if (Eventdata && Eventdata.ALBUM && Eventdata.ALBUM.length > 0) {
+      Eventdata.ALBUM.map(async (al, i) => {
+        let shurl = MainCode + "/" + i + "th_Album." + al.type;
+        let url = await uploadString(al.data, shurl);
+        al.file = url;
+        await Albumcpy.push({ file: url, type: al.type });
+      });
+
+      console.log(Albumcpy);
+    }
+    if (Eventdata && Eventdata.STORY && Eventdata.STORY.length > 0) {
+      Eventdata.STORY.map(async (st, i) => {
+        let shurl = MainCode + "/" + i + "th_Album." + st.type;
+        let url = await uploadString(st.data, shurl);
+        st.file = url;
+        await Storycpy.push({ file: url, type: st.type });
+      });
+      console.log(Storycpy);
+    }
+    console.log({
+      Type: props.Type,
+      Events: EventCpy,
+      Album: Albumcpy,
+      story: Storycpy,
+    });
+    await dispatch(
+      saveEvent({
+        Type: props.Type,
+        Events: EventCpy,
+        Album: Albumcpy,
+        story: Storycpy,
+      })
+    );
   };
 
   function SingleEventParticipants() {
@@ -235,7 +287,6 @@ export default function AddParticipants(props) {
         className="dark-file-upload"
         onClick={() => {
           saverecipeients([], "code");
-          props.handleNext();
         }}
       >
         Skip and use Code for Invitation Instead
@@ -253,8 +304,8 @@ export default function AddParticipants(props) {
       <Grid item xs={6}>
         <button
           className="next"
-          onClick={async () => {
-            await create_event();
+          onClick={() => {
+            create_event();
           }}
         >
           Next

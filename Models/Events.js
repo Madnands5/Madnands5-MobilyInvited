@@ -52,9 +52,33 @@ const EventSchema = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
+  Host: [
+    {
+      type: String,
+      required: true,
+    },
+  ],
   InvId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Invitation",
   },
+  CommentList: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Comments",
+    },
+  ],
+  LikeList: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Likes",
+    },
+  ],
+  RSVPList: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "RSVP",
+    },
+  ],
 });
 module.exports = mongoose.model("Event", EventSchema);

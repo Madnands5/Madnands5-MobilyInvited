@@ -10,15 +10,13 @@ import {
   Paper,
   Modal,
 } from "@material-ui/core";
-import { v4 as uuidv4 } from "uuid";
 import Scehedule from "../../../Assets/schedule.svg";
-import Story from "../../../Assets/AddStory.svg";
-import Albums from "../../../Assets/AddAlbums.svg";
+import Storyimg from "../../../Assets/AddStory.svg";
+import Albumsimg from "../../../Assets/AddAlbums.svg";
 import Map from "../../Helpers/Maps/Maps";
-import { uploadString } from "../../../Utils/FileUpload_Download";
 import CancelIcon from "@material-ui/icons/Cancel";
-import AddAlbum from "../Extras/Album";
-import AddStory from "../Extras/Story";
+import Album from "../Extras/Album";
+import Story from "../Extras/Story";
 import AddSchedule from "../Extras/Schedule";
 
 export default function EventDetails(props) {
@@ -30,6 +28,7 @@ export default function EventDetails(props) {
   const [storyvisible, SetStoryVisible] = useState(false);
   const [albumvisible, SetAlbumVisible] = useState(false);
   const [Location, setLocation] = useState("");
+
   useEffect(() => {
     if (props.Events[props.SelectedEvent] !== undefined) {
       SetCurrentEventDetails(props.Events[props.SelectedEvent]);
@@ -66,6 +65,7 @@ export default function EventDetails(props) {
       Location: Location,
     });
   }, [Location]);
+
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
@@ -275,6 +275,8 @@ export default function EventDetails(props) {
                 CurrentEventDetails={CurrentEventDetails}
                 Events={props.Events}
                 SelectedEvent={props.SelectedEvent}
+                SetCurrentEventDetails={SetCurrentEventDetails}
+                SetScheduleVisible={SetScheduleVisible}
               />
             </div>
           </Modal>
@@ -285,7 +287,7 @@ export default function EventDetails(props) {
           <Grid item xs={12} md={4}>
             <Paper elevation={3} className="schedule-card">
               <center>
-                <img src={Story} alt="schedule" className="schedule-icon" />
+                <img src={Storyimg} alt="schedule" className="schedule-icon" />
                 <h3>Add new Story</h3>
                 <button
                   className="add-schedule"
@@ -316,12 +318,11 @@ export default function EventDetails(props) {
                     className="popup-close"
                   />
 
-                  <AddStory
+                  <Story
                     className="modal-component"
-                    Events={props.Events}
-                    setEvents={props.SetEvent}
-                    setAlbum={props.setAlbum}
                     setStory={props.setStory}
+                    Story={props.Story}
+                    SetStoryVisible={SetStoryVisible}
                   />
                 </div>
               </Modal>
@@ -330,7 +331,7 @@ export default function EventDetails(props) {
           <Grid item xs={12} md={4}>
             <Paper elevation={3} className="schedule-card">
               <center>
-                <img src={Albums} alt="schedule" className="schedule-icon" />
+                <img src={Albumsimg} alt="schedule" className="schedule-icon" />
                 <h3>Add Albums</h3>
                 <button
                   className="add-schedule"
@@ -360,12 +361,11 @@ export default function EventDetails(props) {
                     color="secondary"
                     className="popup-close"
                   />
-                  <AddAlbum
+                  <Album
                     className="modal-component"
-                    Events={props.Events}
-                    setEvents={props.SetEvent}
-                    setAlbum={props.setAlbum}
-                    setStory={props.setStory}
+                    setalbumdata={props.setalbumdata}
+                    albumdata={props.albumdata}
+                    SetAlbumVisible={SetAlbumVisible}
                   />
                 </div>
               </Modal>

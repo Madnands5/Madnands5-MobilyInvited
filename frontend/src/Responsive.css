@@ -1,6 +1,9 @@
-@media only screen and (max-width: 78600px9px) {
+@media only screen and (max-width: 786px) {
   .schedule-icon {
     width: 20% !important;
     left: 40% !important;
+  }
+  .add-Img {
+    width: 100% !important;
   }
 }

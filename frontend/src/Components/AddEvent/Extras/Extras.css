@@ -4,3 +4,9 @@
 .uploadhere {
   height: 40vh;
 }
+.delete-img {
+  position: relative;
+  left: 80%;
+  top: 15%;
+  z-index: 2;
+}

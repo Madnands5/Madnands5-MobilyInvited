@@ -32,8 +32,8 @@ export default function AddEvent(props) {
     Schedule: [],
   };
   const [SelectedEvent, SelectEvent] = useState(0);
-  const [Album, setAlbum] = useState([]);
   const [Story, setStory] = useState([]);
+  const [albumdata, setalbumdata] = useState([]);
   const handleChange = (event) => {
     setType(event.target.value);
   };
@@ -138,8 +138,8 @@ export default function AddEvent(props) {
             handleNext={handleNext}
             handleBack={handleBack}
             addfinalDetails={addfinalDetails}
-            Album={Album}
-            setAlbum={setAlbum}
+            albumdata={albumdata}
+            setalbumdata={setalbumdata}
             Story={Story}
             setStory={setStory}
             template={events}
@@ -172,6 +172,7 @@ export default function AddEvent(props) {
             removeAnEvent={removeAnEvent}
             addfinalDetails={addfinalDetails}
             Type={Type}
+            Story={Story}
           />
         );
       case 3:

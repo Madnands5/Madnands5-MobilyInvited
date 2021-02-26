@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Grid } from "@material-ui/core";
-import Header from "../Helpers/Header/Header";
-import NotificationsIcon from "@material-ui/icons/Notifications";
+import noinvitation from "../../Assets/NoInvitation.svg";
+
 import NotificationsNoneOutlinedIcon from "@material-ui/icons/NotificationsNoneOutlined";
 import LanguageOutlinedIcon from "@material-ui/icons/LanguageOutlined";
+import "./Invitations.css";
 export function Invitationbox(props) {
   <Grid
     container
@@ -36,12 +37,16 @@ export function Invitationbox(props) {
   </Grid>;
 }
 
-export default function invitation() {
-  const [state, setstate] = useState("");
+export default function Invitation() {
+  const [InvitationList, setInvitationList] = useState([]);
   useEffect(() => {}, []);
   const Auth = useSelector((state) => state.Auth);
-  const InvitationList = useSelector((state) => state.InvitationList);
-  return InvitationList.map((invitation, index) => {
-    <Invitationbox invitation={invitation} index={index} className="w-100" />;
-  });
+  // const InvitationList = useSelector((state) => state.InvitationList);
+  return InvitationList.length === 0 ? (
+    <img src={noinvitation} className="nodata" />
+  ) : (
+    InvitationList.map((invitation, index) => {
+      <Invitationbox invitation={invitation} index={index} className="w-100" />;
+    })
+  );
 }

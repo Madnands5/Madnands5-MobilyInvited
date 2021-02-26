@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
+import { useDropzone } from "react-dropzone";
+import Gallery from "../../../Assets/ChooseFromGallery.svg";
 import { Grid, TextField, IconButton } from "@material-ui/core";
 import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
@@ -6,62 +8,144 @@ export default function AddSchedule(props) {
   const [subEvent, setSubevent] = useState([
     ...props.CurrentEventDetails.Schedule,
   ]);
-  const [singlesubevent, setsinglesubevent] = useState({
-    Name: "",
-    datetime: "",
-    description: "",
-  });
+
+  const [subname, setsubname] = useState("");
+  const [file, setfile] = useState("");
+  const [filetype, setfiletype] = useState("");
+  const [datetime, setdatetime] = useState("");
+  const [description, setdescription] = useState("");
+
   const save = async () => {
-    await setSubevent([...subEvent, singlesubevent]);
-    await savefinal();
+    let data = {
+      Name: subname,
+      datetime: datetime,
+      description: description,
+      file: file,
+      filetype: filetype,
+    };
+    console.log([...subEvent, data]);
+
+    await setSubevent([...props.CurrentEventDetails.Schedule, data]);
+
+    var EventsCopy = { ...props.CurrentEventDetails };
+    console.log(EventsCopy);
+    EventsCopy.Schedule = [...props.CurrentEventDetails.Schedule, data];
+    console.log(props.EventsCopy);
+    await props.SetCurrentEventDetails(EventsCopy);
+    console.log(props.Events);
+    props.SetScheduleVisible(true);
+    Delete();
   };
-  const Delete = () => {};
-  const savefinal = () => {
-    var EventsCopy = [...props.Events];
-    EventsCopy[props.SelectedEvent].Schedule = subEvent;
-    props.setEvents(EventsCopy);
+  const onDrop = useCallback(async (acceptedFiles) => {
+    let dataurl = "";
+
+    if (acceptedFiles[0].size > 5259265) {
+    } else {
+      let type = acceptedFiles[0].type.split("/");
+
+      await getBase64(acceptedFiles[0]).then(async (data) => {
+        setfile(data);
+        setfiletype(type[1]);
+      });
+    }
+  }, []);
+
+  function getBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  }
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    multiple: false,
+    accept: "image/jpeg, image/png, image/jpg",
+  });
+
+  const Delete = () => {
+    setsubname("");
+    setfile("");
+    setfiletype("");
+    setdatetime("");
+    setdescription("");
   };
+
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
-        <h2>Add Schedule</h2>
+        <h2 className="m-0">Add Schedule</h2>
       </Grid>
       <Grid item xs={12}>
         {subEvent.map((eve, index) => (
-          <Grid container spacing={0}>
+          <Grid key={eve.Name + index} container spacing={0}>
             <Grid item xs={3}>
-              <img
-                src={
-                  props.Events[props.SelectedEvent].file === undefined
-                    ? " "
-                    : props.Events[props.SelectedEvent]
-                }
-              />
+              {eve.filetype === "png" ||
+              eve.filetype === "jpg" ||
+              eve.filetype === "jpeg" ? (
+                <img
+                  src={eve.file === undefined ? " " : eve.file}
+                  className="w-100"
+                />
+              ) : (
+                <video
+                  src={eve.file === undefined ? " " : eve.file}
+                  className="w-100"
+                />
+              )}
             </Grid>
-            <Grid item xs={3}></Grid>
+            <Grid item xs={9}>
+              <Grid container spacing={0} className="m-5px">
+                <Grid item xs={12}>
+                  <b>{eve.Name}</b>
+                </Grid>
+                <Grid item xs={12}>
+                  {eve.description}
+                </Grid>
+                <Grid item xs={12}>
+                  {eve.datetime}
+                </Grid>
+              </Grid>
+            </Grid>
           </Grid>
         ))}
       </Grid>
       <Grid item xs={12} className="blue-border ">
         <Grid container spacing={2}>
           <Grid item xs={4}>
-            <img
-              src={
-                props.Events[props.SelectedEvent].file === undefined
-                  ? " "
-                  : props.Events[props.SelectedEvent].file
-              }
-              className="w-100"
-            />
+            {file === "" ? (
+              <div {...getRootProps()} className="w-100">
+                <input {...getInputProps()} className="w-100" />
+                <img
+                  src={Gallery}
+                  className="w-100 uploadhere"
+                  className="w-100"
+                />
+              </div>
+            ) : filetype === "png" ||
+              filetype === "jpg" ||
+              filetype === "jpeg" ? (
+              <img src={file} className="w-100" />
+            ) : (
+              <div {...getRootProps()} className="w-100">
+                <input {...getInputProps()} className="w-100" />
+                <img
+                  src={Gallery}
+                  className="w-100 uploadhere"
+                  className="w-100"
+                />
+              </div>
+            )}
           </Grid>
           <Grid item xs={8} className="grey">
             <TextField
               className="w-100"
               label="Sub-Event Name"
               onChange={(e) => {
-                setsinglesubevent({ ...singlesubevent, Name: e.target.value });
+                setsubname(e.target.value);
               }}
-              value={singlesubevent.Name}
+              value={subname}
             />
             <form noValidate>
               <TextField
@@ -74,24 +158,18 @@ export default function AddSchedule(props) {
                 }}
                 className="w-90-p "
                 onChange={(e) => {
-                  setsinglesubevent({
-                    ...singlesubevent,
-                    datetime: e.target.value,
-                  });
+                  setdatetime(e.target.value);
                 }}
-                value={singlesubevent.datetime}
+                value={datetime}
               />
             </form>
             <TextField
               className="w-100"
-              label="Sub-Event Name"
+              label="Sub-Event description"
               onChange={(e) => {
-                setsinglesubevent({
-                  ...singlesubevent,
-                  description: e.target.value,
-                });
+                setdescription(e.target.value);
               }}
-              value={singlesubevent.description}
+              value={description}
             />
             <Grid item xs={12}>
               <IconButton

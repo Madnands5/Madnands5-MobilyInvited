@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
+import { useDropzone } from "react-dropzone";
+import Gallery from "../../../Assets/ChooseFromGallery.svg";
 import { Grid, TextField } from "@material-ui/core";
 import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
@@ -20,7 +22,19 @@ export default function AddSchedule(props) {
             <Grid item xs={3}>
               <img src={props.subEvent.file} />
             </Grid>
-            <Grid item xs={3}></Grid>
+            <Grid item xs={9}>
+              <Grid container spacing={0}>
+                <Grid item xs={12}>
+                  {subEvent.Name}
+                </Grid>
+                <Grid item xs={12}>
+                  {subEvent.datetime}
+                </Grid>
+                <Grid item xs={12}>
+                  {subEvent.description}
+                </Grid>
+              </Grid>
+            </Grid>
           </Grid>
         ))}
       </Grid>
@@ -72,8 +86,16 @@ export default function AddSchedule(props) {
             />
           </Grid>
           <Grid item xs={12}>
-            <CheckCircleOutlineIcon />
-            <DeleteForeverIcon />
+            <CheckCircleOutlineIcon
+              onClick={async () => {
+                await setSubevent([...singlesubevent]);
+                await SetCurrentEventDetails({
+                  ...props.CurrentEventDetails,
+                  schedule: subEvent,
+                });
+              }}
+            />
+            <DeleteForeverIcon onClick={() => {}} />
           </Grid>
         </Grid>
       </Grid>

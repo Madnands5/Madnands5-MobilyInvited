@@ -21,6 +21,7 @@ function App() {
             <Route exact path="/login" component={MobileAuth} />
             <Route exact path="/" component={Landingpage} />
             <Route exact path="/*" component={Redirector} />
+            <Route exact path="/event/:code/login" component={AddEvent} />
           </Switch>
         </div>
       </Router>
@@ -32,6 +33,17 @@ function App() {
           <Switch>
             {" "}
             <Route exact path="/home" component={Home} />
+            <Route exact path="/add-event" component={AddEvent} />
+            <Route exact path="/view-Invitations" component={AddEvent} />
+            <Route
+              exact
+              path="/View-Single-Invitaion/:id"
+              component={AddEvent}
+            />
+            <Route exact path="/event/:code/login" component={AddEvent} />
+            <Route exact path="/Chat/:room" component={AddEvent} />
+            <Route exact path="/create-room/" component={AddEvent} />
+            <Route exact path="/user-profile" component={AddEvent} />
             <Route exact path="/add-event" component={AddEvent} />
             <Route exact path="/*" component={Home} />
           </Switch>

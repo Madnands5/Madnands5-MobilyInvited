@@ -1,8 +1,7 @@
 const mongoose = require("mongoose");
 const UserDetailsSchema = new mongoose.Schema({
-  Userid: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+  Phone: {
+    type: String,
     required: true,
   },
   Notifications: { type: String, required: true },

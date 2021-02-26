@@ -1,2 +1,6 @@
 export const EVENTSAVED = "EVENTSAVED";
 export const EVENTSAVEFAIL = "EVENTSAVEFAIL";
+export const SAVEALBUM = "SAVEALBUM";
+export const DELETEALBUM = "DELETEALBUM";
+export const SAVESTORY = "SAVESTORY";
+export const DELETESTORY = "DELETESTORY";
