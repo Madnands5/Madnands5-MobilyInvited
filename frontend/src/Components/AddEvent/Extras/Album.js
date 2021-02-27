@@ -11,7 +11,7 @@ export default function Album(props) {
   const Eventdata = useSelector((state) => state.Eventdata);
   let bkpalbum = [];
   let filetype = [];
-  const [album, setAlbum] = useState([...Eventdata.AlBUM]);
+  const [album, setAlbum] = useState([...Eventdata.ALBUM]);
 
   const save = async () => {
     dispatch({

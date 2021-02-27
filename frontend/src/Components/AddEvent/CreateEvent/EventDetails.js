@@ -10,6 +10,7 @@ import {
   Paper,
   Modal,
 } from "@material-ui/core";
+import AddImg from "../../../Assets/AddImage.svg";
 import Scehedule from "../../../Assets/schedule.svg";
 import Storyimg from "../../../Assets/AddStory.svg";
 import Albumsimg from "../../../Assets/AddAlbums.svg";
@@ -18,8 +19,10 @@ import CancelIcon from "@material-ui/icons/Cancel";
 import Album from "../Extras/Album";
 import Story from "../Extras/Story";
 import AddSchedule from "../Extras/Schedule";
-
+import ImageSelectionModal from "./ImageSelectionModal";
 export default function EventDetails(props) {
+  const [processing, setProcessing] = useState(false);
+  const [showPopup, toggleShowPopup] = useState(false);
   const [CurrentEventDetails, SetCurrentEventDetails] = useState({
     ...props.Events[props.SelectedEvent],
   });
@@ -68,6 +71,96 @@ export default function EventDetails(props) {
 
   return (
     <Grid container spacing={2}>
+      <Grid item xs={12} sm={12}>
+        {CurrentEventDetails !== undefined &&
+        CurrentEventDetails.file === "" ? (
+          <center>
+            <img
+              src={AddImg}
+              className="add-Img"
+              onClick={() => {
+                toggleShowPopup(true);
+              }}
+            />
+          </center>
+        ) : CurrentEventDetails !== undefined &&
+          CurrentEventDetails.filetype !== undefined ? (
+          CurrentEventDetails.filetype === "png" ||
+          CurrentEventDetails.filetype === "jpg" ||
+          CurrentEventDetails.filetype === "jpeg" ? (
+            <img
+              src={
+                CurrentEventDetails !== undefined
+                  ? CurrentEventDetails.file
+                  : " "
+              }
+              onClick={() => {
+                toggleShowPopup(true);
+              }}
+              className={
+                processing === true
+                  ? "transparent uploaded-file w-100"
+                  : "notTransparent uploaded-file w-100"
+              }
+            />
+          ) : (
+            <video
+              muted
+              type="video/mp4"
+              autoPlay={true}
+              src={
+                CurrentEventDetails !== undefined
+                  ? CurrentEventDetails.file
+                  : " "
+              }
+              onClick={() => {
+                toggleShowPopup(true);
+              }}
+              preload="none"
+              className={
+                processing === true
+                  ? " transparent w-100"
+                  : "notTransparent w-100"
+              }
+            />
+          )
+        ) : (
+          <></>
+        )}
+        <div>
+          <Modal
+            aria-labelledby="transition-modal-title"
+            aria-describedby="transition-modal-description"
+            className="modal"
+            open={showPopup}
+            onClose={() => {
+              toggleShowPopup(false);
+            }}
+          >
+            <div className="modal-card">
+              <CancelIcon
+                onClick={() => {
+                  toggleShowPopup(false);
+                }}
+                color="secondary"
+                className="popup-close"
+              />
+
+              <ImageSelectionModal
+                className="modal-component"
+                data={props.Events}
+                setEvents={props.setEvents}
+                SelectEvent={props.SelectEvent}
+                SelectedEvent={props.SelectedEvent}
+                processing={processing}
+                setDisablesave={props.setDisablesave}
+                CurrentEventDetails={CurrentEventDetails}
+                SetCurrentEventDetails={SetCurrentEventDetails}
+              />
+            </div>
+          </Modal>
+        </div>
+      </Grid>
       <Grid item xs={12}>
         <TextField
           id="outlined-basics"

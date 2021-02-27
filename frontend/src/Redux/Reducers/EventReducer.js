@@ -10,12 +10,12 @@ const Eventdata = (state = initialState, action) => {
     case "SAVEALBUM":
       return {
         ...state,
-        AlBUM: action.payload,
+        ALBUM: action.payload,
       };
     case "DELETEALBUM":
       return {
         ...state,
-        AlBUM: [],
+        ALBUM: [],
       };
     case "SAVESTORY":
       return {

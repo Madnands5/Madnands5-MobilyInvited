@@ -89,52 +89,97 @@ export default function AddParticipants(props) {
     debugger;
     let EventCpy = [...props.Events];
     let MainCode = "";
-    EventCpy.map(async (even, index) => {
-      console.log(even);
-      MainCode = even.MainCode;
-      let furl = even.MainCode + "/" + even.eventCode + "." + even.filetype;
+    for (let i = 0; i < EventCpy.length; i++) {
+      MainCode = EventCpy[i].MainCode;
+      let furl =
+        EventCpy[i].MainCode +
+        "/" +
+        EventCpy[i].eventCode +
+        "." +
+        EventCpy[i].filetype;
       await console.log(furl);
-      let url = await uploadString(even.file, furl);
+      let url = await uploadString(EventCpy[i].file, furl);
       await console.log(url);
-      EventCpy[index].file = url;
-      if (even.Schedule.lenght > 0) {
-        let Schdulecpy = [...even.Schedule];
-        even.Schedule.map(async (sh, i) => {
-          let shurl =
-            even.MainCode +
-            "/" +
-            even.eventCode +
-            i +
-            "th_Schedule." +
-            sh.filetype;
-          let url = await uploadString(sh.file, shurl);
-          EventCpy[index].Schedule[i].file = url;
-        });
+      EventCpy[i].file = url;
 
-        console.log(even.Schedule);
+      if (EventCpy[i].Schedule.length > 0) {
+        for (let j = 0; j < EventCpy[i].Schedule.length; j++) {
+          let shurl =
+            EventCpy[i].MainCode +
+            "/" +
+            EventCpy[i].eventCode +
+            j +
+            "th_Schedule." +
+            EventCpy[i].Schedule[j].filetype;
+          let url = await uploadString(EventCpy[i].Schedule[j].file, shurl);
+          EventCpy[i].Schedule[i].file = url;
+        }
+
+        // EventCpy[i].Schedule.map(async (sh, index) => {
+        //   let shurl =
+        //     EventCpy[i].MainCode +
+        //     "/" +
+        //     EventCpy[i].eventCode +
+        //     index +
+        //     "th_Schedule." +
+        //     sh.filetype;
+        //   let url = await uploadString(sh.file, shurl);
+        //   EventCpy[index].Schedule[i].file = url;
+        // });
+
+        console.log(EventCpy[i].Schedule);
       }
-    });
+    }
+
+    // EventCpy.map(async (even, index) => {
+    //   console.log(even);
+    //   MainCode = even.MainCode;
+    //   let furl = even.MainCode + "/" + even.eventCode + "." + even.filetype;
+
+    //   let url = await uploadString(even.file, furl);
+    //   await console.log(url);
+    //   EventCpy[index].file = url;
+
+    //   if (even.Schedule.lenght > 0) {
+    //     let Schdulecpy = [...even.Schedule];
+    //     even.Schedule.map(async (sh, i) => {
+    //       let shurl =
+    //         even.MainCode +
+    //         "/" +
+    //         even.eventCode +
+    //         i +
+    //         "th_Schedule." +
+    //         sh.filetype;
+    //       let url = await uploadString(sh.file, shurl);
+    //       EventCpy[index].Schedule[i].file = url;
+    //     });
+
+    //     console.log(even.Schedule);
+    //   }
+    // });
 
     await props.setEvents(EventCpy);
     console.log({ Events: props.Events });
 
     if (Eventdata && Eventdata.ALBUM && Eventdata.ALBUM.length > 0) {
-      Eventdata.ALBUM.map(async (al, i) => {
-        let shurl = MainCode + "/" + i + "th_Album." + al.type;
-        let url = await uploadString(al.data, shurl);
-        al.file = url;
-        await Albumcpy.push({ file: url, type: al.type });
-      });
-
+      Albumcpy = [];
+      for (let i = 0; i < Eventdata.ALBUM.length; i++) {
+        let shurl = MainCode + "/" + i + "th_Album." + Eventdata.ALBUM[i].type;
+        let url = await uploadString(Eventdata.ALBUM[i].data, shurl);
+        Eventdata.ALBUM[i].file = url;
+        await Albumcpy.push({ file: url, type: Eventdata.ALBUM[i].type });
+      }
       console.log(Albumcpy);
     }
+
     if (Eventdata && Eventdata.STORY && Eventdata.STORY.length > 0) {
-      Eventdata.STORY.map(async (st, i) => {
-        let shurl = MainCode + "/" + i + "th_Album." + st.type;
-        let url = await uploadString(st.data, shurl);
-        st.file = url;
-        await Storycpy.push({ file: url, type: st.type });
-      });
+      Storycpy = [];
+      for (let i = 0; i < Eventdata.STORY.length; i++) {
+        let shurl = MainCode + "/" + i + "th_Album." + Eventdata.STORY[i].type;
+        let url = await uploadString(Eventdata.STORY[i].data, shurl);
+        Eventdata.STORY[i].file = url;
+        await Storycpy.push({ file: url, type: Eventdata.STORY[i].type });
+      }
       console.log(Storycpy);
     }
     console.log({

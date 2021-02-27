@@ -12,19 +12,20 @@ export default function ImageSelectionModal(props) {
 
     console.log(props.data);
 
-    let EventsCpy = await [...props.data];
+    let EventsCpy = await { ...props.CurrentEventDetails };
     let type = acceptedFiles[0].type.split("/");
-    EventsCpy[props.SelectedEvent].filetype = type[1];
+    EventsCpy.filetype = type[1];
     var reader = await new FileReader();
     reader.onload = async function () {
-      EventsCpy[props.SelectedEvent].file = reader.result;
-      await props.setEvents(EventsCpy);
+      EventsCpy.file = reader.result;
+      await props.SetCurrentEventDetails(EventsCpy);
     };
     reader.onerror = function (error) {
       console.log("Error: ", error);
     };
     await reader.readAsDataURL(acceptedFiles[0]);
   }, []);
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     multiple: false,
