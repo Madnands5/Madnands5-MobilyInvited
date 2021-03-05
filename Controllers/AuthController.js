@@ -54,3 +54,13 @@ exports.login = async (req, res) => {
     res.send(error);
   }
 };
+exports.userdetails = async (req, res) => {
+  const token = req.header("auth");
+  const verified = jwt.verify(token, process.env.jwt_secret);
+  req.user = verified;
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    { Name: req.body.name, Gender: req.body.gender },
+    { new: true, useFindAndModify: false }
+  );
+};

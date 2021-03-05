@@ -3,6 +3,8 @@ import { reactLocalStorage } from "reactjs-localstorage";
 const initialState = {
   ALBUM: [],
   STORY: [],
+  myEvents: [],
+  myInvitations: [],
 };
 
 const Eventdata = (state = initialState, action) => {
@@ -26,6 +28,16 @@ const Eventdata = (state = initialState, action) => {
       return {
         ...state,
         STORY: [],
+      };
+    case "GOTMYEVENTS":
+      return {
+        ...state,
+        myEvents: action.payload,
+      };
+    case "GETMYINVITAITONS":
+      return {
+        ...state,
+        myInvitations: action.payload,
       };
     default:
       return state;

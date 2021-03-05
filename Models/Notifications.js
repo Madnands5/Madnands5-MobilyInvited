@@ -4,6 +4,6 @@ const UserDetailsSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  Notifications: { type: String, required: true },
+  Notification: { type: String, required: true },
 });
 module.exports = mongoose.model("UserDetails", UserDetailsSchema);

@@ -65,7 +65,6 @@
   margin-bottom: 5px !important;
 }
 .schedule-card {
-  height: 220px;
   margin: 15px;
 }
 .p-t-15px {
@@ -73,4 +72,7 @@
 }
 .ofh {
   overflow-y: auto;
+}
+.fs-small {
+  font-size: 8px;
 }

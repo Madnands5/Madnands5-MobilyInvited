@@ -1,52 +1,48 @@
-import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { Grid } from "@material-ui/core";
-import noinvitation from "../../Assets/NoInvitation.svg";
-
-import NotificationsNoneOutlinedIcon from "@material-ui/icons/NotificationsNoneOutlined";
-import LanguageOutlinedIcon from "@material-ui/icons/LanguageOutlined";
+import React from "react";
+import { Grid, Paper } from "@material-ui/core";
+import NoInv from "../../Assets/NoInvitation.svg";
 import "./Invitations.css";
-export function Invitationbox(props) {
-  <Grid
-    container
-    spacing="0"
-    style={{ backgroundImage: props.invitation.url }}
-    className="invitaion-card"
-  >
-    <NotificationsNoneOutlinedIcon className="bell-icon" />
-    <div className="w-100 mt-70-p">
-      <Grid container spacing={0}>
-        <Grid item xs={6}>
-          <Grid container spacing={0}>
-            <Grid item xs={12}>
-              {props.invitation.Type}
+import LocationOnIcon from "@material-ui/icons/LocationOn";
+import LanguageIcon from "@material-ui/icons/Language";
+export default function Invitation(props) {
+  if (props.data.length > 0) {
+  } else {
+    return <img src={NoInv} className="no-data" />;
+  }
+  return props.data.map((inv, index) => (
+    <Grid container spacing={0}>
+      <Grid xs={12}>
+        <div
+          className="card"
+          style={{
+            backgroundImage: `url(${inv.file})`,
+            backgroundRepeat: "none",
+          }}
+        >
+          <Grid container spacing={0} className="float-bottom">
+            <Grid xs={4} justify="center" className="t-white">
+              <Grid container spacing={0}>
+                <Grid xs={12} className="t-white">
+                  {inv.InvId.Type}
+                </Grid>
+                <Grid xs={12} className="t-white fs-small">
+                  {inv.Date} {inv.Time}
+                </Grid>
+              </Grid>
             </Grid>
-            <Grid item xs={12}>
-              {props.invitation.date}
+            <Grid xs={4} justify="center">
+              <button className="rsvp-button">RSVP</button>
+            </Grid>
+            <Grid xs={4} className="t-white">
+              {inv.VenueType === "offline" ? (
+                <LanguageIcon fontSize="large" />
+              ) : (
+                <LocationOnIcon fontSize="large" />
+              )}
             </Grid>
           </Grid>
-        </Grid>
-        <Grid item xs={4}>
-          <button className="rsvp">RSVP</button>
-        </Grid>
-        <Grid item xs={2}>
-          <LanguageOutlinedIcon />
-        </Grid>
+        </div>
       </Grid>
-    </div>
-  </Grid>;
-}
-
-export default function Invitation() {
-  const [InvitationList, setInvitationList] = useState([]);
-  useEffect(() => {}, []);
-  const Auth = useSelector((state) => state.Auth);
-  // const InvitationList = useSelector((state) => state.InvitationList);
-  return InvitationList.length === 0 ? (
-    <img src={noinvitation} className="nodata" />
-  ) : (
-    InvitationList.map((invitation, index) => {
-      <Invitationbox invitation={invitation} index={index} className="w-100" />;
-    })
-  );
+    </Grid>
+  ));
 }

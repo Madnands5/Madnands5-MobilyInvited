@@ -115,18 +115,6 @@ export default function AddParticipants(props) {
           EventCpy[i].Schedule[i].file = url;
         }
 
-        // EventCpy[i].Schedule.map(async (sh, index) => {
-        //   let shurl =
-        //     EventCpy[i].MainCode +
-        //     "/" +
-        //     EventCpy[i].eventCode +
-        //     index +
-        //     "th_Schedule." +
-        //     sh.filetype;
-        //   let url = await uploadString(sh.file, shurl);
-        //   EventCpy[index].Schedule[i].file = url;
-        // });
-
         console.log(EventCpy[i].Schedule);
       }
     }

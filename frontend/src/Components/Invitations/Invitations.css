@@ -3,3 +3,25 @@
   width: 80%;
   margin: 5%;
 }
+.card {
+  width: 98%;
+  height: 500px;
+  margin: 1%;
+  background-repeat: no-repeat;
+  background-position-x: center;
+}
+.float-bottom {
+  position: relative;
+  top: 90%;
+  text-align: center;
+}
+.rsvp-button {
+  height: 45px;
+  font-size: 20px;
+  background: none;
+  border: solid white;
+  color: white;
+  box-shadow: 2px 1px 9px 3px white;
+  border-radius: 500px;
+  width: 100%;
+}

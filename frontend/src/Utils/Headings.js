@@ -1,5 +1,6 @@
 // import React, { useEffect, useState } from "react";
 import Logo from "../Assets/Logo.svg";
+import history from "./History";
 export default function Headings(props) {
   // const [url, seturl] = useState("");
   // useEffect(() => {
@@ -9,7 +10,12 @@ export default function Headings(props) {
 
   return (
     <span className="black-t title-name">
-      <img src={Logo} className="Logo" alt="logo" />
+      <img
+        src={Logo}
+        className="Logo"
+        alt="logo"
+        onClick={() => history.push("/home")}
+      />
     </span>
   );
 

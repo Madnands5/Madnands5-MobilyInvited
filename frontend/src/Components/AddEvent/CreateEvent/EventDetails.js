@@ -9,6 +9,7 @@ import {
   FormControl,
   Paper,
   Modal,
+  Button,
 } from "@material-ui/core";
 import AddImg from "../../../Assets/AddImage.svg";
 import Scehedule from "../../../Assets/schedule.svg";
@@ -43,7 +44,103 @@ export default function EventDetails(props) {
       SetCurrentEventDetails(props.Events[props.SelectedEvent]);
     }
   }, [props.SelectedEvent]);
+  var gapi = window.gapi;
+  /* 
+    Update with your own Client Id and Api key 
+  */
+  var CLIENT_ID =
+    "271872414479-lumfn9dkcqh1k1et8dfau81dkcng81s4.apps.googleusercontent.com";
+  var API_KEY = "AIzaSyCdk1XolxNow08BXLxbzCeDReSrNTTlXCo";
+  var clientSecret = "GpxXOinOWEyYdsbnVjolU9is";
+  var DISCOVERY_DOCS = [
+    "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest",
+  ];
+  var SCOPES = "https://www.googleapis.com/auth/calendar.events";
 
+  const CreateMeeting = () => {
+    gapi.load("client:auth2", () => {
+      console.log("loaded client");
+
+      gapi.client.init({
+        apiKey: API_KEY,
+        clientId: CLIENT_ID,
+        discoveryDocs: DISCOVERY_DOCS,
+        scope: SCOPES,
+      });
+
+      gapi.client.load("calendar", "v3", () => console.log("bam!"));
+
+      gapi.auth2
+        .getAuthInstance()
+        .signIn()
+        .then(() => {
+          var event = {
+            summary: "Mobily Event!",
+            conferenceData: {
+              createRequest: {
+                requestId: props.Events[props.SelectedEvent].MainCode,
+                conferenceSolutionKey: { type: "hangoutsMeet" },
+              },
+            },
+
+            description: "Really great refreshments",
+            start: {
+              dateTime: "2020-06-28T09:00:00-07:00",
+              timeZone: "America/Los_Angeles",
+            },
+            end: {
+              dateTime: "2020-06-28T17:00:00-07:00",
+              timeZone: "America/Los_Angeles",
+            },
+            recurrence: ["RRULE:FREQ=DAILY;COUNT=2"],
+            attendees: [
+              { email: "lpage@example.com" },
+              { email: "sbrin@example.com" },
+            ],
+            reminders: {
+              useDefault: false,
+              overrides: [
+                { method: "email", minutes: 24 * 60 },
+                { method: "popup", minutes: 10 },
+              ],
+            },
+          };
+
+          var request = gapi.client.calendar.events.insert({
+            calendarId: "primary",
+            resource: event,
+          });
+
+          request.execute((event) => {
+            console.log(event);
+            window.open(event.htmlLink);
+
+            SetCurrentEventDetails({
+              ...CurrentEventDetails,
+              Location: { ...Location, Link: event.htmlLink },
+            });
+          });
+
+          /*
+            Uncomment the following block to get events
+        */
+          /*
+        // get events
+        gapi.client.calendar.events.list({
+          'calendarId': 'primary',
+          'timeMin': (new Date()).toISOString(),
+          'showDeleted': false,
+          'singleEvents': true,
+          'maxResults': 10,
+          'orderBy': 'startTime'
+        }).then(response => {
+          const events = response.result.items
+          console.log('EVENTS: ', events)
+        })
+        */
+        });
+    });
+  };
   const save = async () => {
     let eventscpy = props.Events;
     let currentEvent = props.SelectedEvent;
@@ -68,7 +165,18 @@ export default function EventDetails(props) {
       Location: Location,
     });
   }, [Location]);
-
+  useEffect(() => {
+    if (
+      CurrentEventDetails.VenueType === "Online" ||
+      CurrentEventDetails.VenueType === "Both"
+    ) {
+      // CreateMeeting();
+      SetCurrentEventDetails({
+        ...CurrentEventDetails,
+        Location: "",
+      });
+    }
+  }, [CurrentEventDetails.VenueType]);
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} sm={12}>
@@ -206,8 +314,10 @@ export default function EventDetails(props) {
           inputProps={{
             step: 300, // 5 min
           }}
+          ampm={false}
           value={CurrentEventDetails.Time}
           onChange={(e) => {
+            console.log(e.target.value);
             SetCurrentEventDetails({
               ...CurrentEventDetails,
               Time: e.target.value,
@@ -265,32 +375,110 @@ export default function EventDetails(props) {
       </Grid>
 
       {CurrentEventDetails.VenueType === "Online" ? (
-        <Grid item xs={8}>
-          <TextField
-            id="outlined-basic"
-            label="Link"
-            variant="outlined"
-            className="w-100-p"
-            value={CurrentEventDetails.Location}
-            onChange={(e) => {
-              SetCurrentEventDetails({
-                ...CurrentEventDetails,
-                Location: e.target.value,
-              });
-            }}
-          />
-        </Grid>
+        <>
+          {" "}
+          <Grid item xs={8}>
+            <TextField
+              id="outlined-basic"
+              label="Place Meeting Links here"
+              variant="outlined"
+              className="w-100-p"
+              value={CurrentEventDetails.Location}
+              onChange={(e) => {
+                SetCurrentEventDetails({
+                  ...CurrentEventDetails,
+                  Location: e.target.value,
+                });
+              }}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => {
+                window.open("https://meet.google.com/", "_blank");
+              }}
+            >
+              Use Google-Meet
+            </Button>
+          </Grid>{" "}
+          <Grid item xs={6}>
+            {" "}
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => {
+                window.open("https://zoom.us/", "_blank");
+              }}
+            >
+              Use Zoom Calls
+            </Button>
+          </Grid>
+        </>
+      ) : CurrentEventDetails.VenueType === "Offline" ? (
+        <>
+          <Grid item xs={12} sm={12} md={12}>
+            <Map
+              SetCurrentEventDetails={SetCurrentEventDetails}
+              CurrentEventDetails={CurrentEventDetails}
+              center={{ lat: 20.5937, lng: 78.9629 }}
+              height="300px"
+              zoom={12}
+              setLocation={setLocation}
+            />
+          </Grid>
+        </>
       ) : (
-        <Grid item xs={12} sm={12} md={12}>
-          <Map
-            SetCurrentEventDetails={SetCurrentEventDetails}
-            CurrentEventDetails={CurrentEventDetails}
-            center={{ lat: 20.5937, lng: 78.9629 }}
-            height="300px"
-            zoom={12}
-            setLocation={setLocation}
-          />
-        </Grid>
+        <>
+          {" "}
+          <Grid item xs={8}>
+            <TextField
+              id="outlined-basic"
+              label="Place Meeting Links here"
+              variant="outlined"
+              className="w-100-p"
+              value={CurrentEventDetails.Location}
+              onChange={(e) => {
+                SetCurrentEventDetails({
+                  ...CurrentEventDetails,
+                  Location: e.target.value,
+                });
+              }}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                window.open("https://meet.google.com/", "_blank");
+              }}
+            >
+              Use Google-Meet
+            </Button>
+          </Grid>{" "}
+          <Grid item xs={6}>
+            {" "}
+            <Button
+              variant="outlined"
+              onClick={() => {
+                window.open("https://www.geeksforgeeks.org", "_blank");
+              }}
+            >
+              Use zoom
+            </Button>
+          </Grid>
+          <Grid item xs={12} sm={12} md={12}>
+            <Map
+              SetCurrentEventDetails={SetCurrentEventDetails}
+              CurrentEventDetails={CurrentEventDetails}
+              center={{ lat: 20.5937, lng: 78.9629 }}
+              height="300px"
+              zoom={12}
+              setLocation={setLocation}
+            />
+          </Grid>{" "}
+        </>
       )}
 
       <Grid item xs={12}>

@@ -6,10 +6,11 @@ const InvitationSchema = new mongoose.Schema({
     min: 2,
     max: 255,
   },
-  EventList: [
+  EventList: [{ Event: { type: mongoose.Schema.ObjectId, ref: "Event" } }],
+  Host: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Event",
+      type: String,
+      required: true,
     },
   ],
 });

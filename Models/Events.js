@@ -40,6 +40,7 @@ const EventSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+
   file: {
     type: String,
     required: true,
@@ -61,6 +62,7 @@ const EventSchema = new mongoose.Schema({
   InvId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Invitation",
+    required: true,
   },
   CommentList: [
     {
@@ -78,6 +80,12 @@ const EventSchema = new mongoose.Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "RSVP",
+    },
+  ],
+  PostList: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Posts",
     },
   ],
 });

@@ -24,6 +24,7 @@ const initverify = async (reciver, res) => {
     .verifications.create({ to: reciver, channel: "sms" })
     .then((verification) => {
       console.log(verification);
+      console.log("sms sent");
       res.json({ status: "pending", response: verification, vtoken });
     })
     .catch((error) => {
@@ -55,13 +56,13 @@ const sendtowatsapp = async (recievers, body) => {
         console.log("whatsapp: +91" + number);
         return client.messages.create({
           body: body,
-          from: "whatsapp:+18703962161",
+          from: "whatsapp:+14155238886",
           to: "whatsapp:+91" + number,
         });
       } else {
         return client.messages.create({
           body: body,
-          from: "whatsapp:+18703962161",
+          from: "whatsapp:+14155238886",
           to: "whatsapp:" + number,
         });
       }
