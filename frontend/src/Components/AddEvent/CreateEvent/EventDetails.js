@@ -27,12 +27,10 @@ export default function EventDetails(props) {
   const [CurrentEventDetails, SetCurrentEventDetails] = useState({
     ...props.Events[props.SelectedEvent],
   });
-
   const [shedulevisible, SetScheduleVisible] = useState(false);
   const [storyvisible, SetStoryVisible] = useState(false);
   const [albumvisible, SetAlbumVisible] = useState(false);
   const [Location, setLocation] = useState("");
-
   useEffect(() => {
     if (props.Events[props.SelectedEvent] !== undefined) {
       SetCurrentEventDetails(props.Events[props.SelectedEvent]);
@@ -57,90 +55,91 @@ export default function EventDetails(props) {
   ];
   var SCOPES = "https://www.googleapis.com/auth/calendar.events";
 
-  const CreateMeeting = () => {
-    gapi.load("client:auth2", () => {
-      console.log("loaded client");
+  // const CreateMeeting = () => {
+  //   gapi.load("client:auth2", () => {
+  //     console.log("loaded client");
 
-      gapi.client.init({
-        apiKey: API_KEY,
-        clientId: CLIENT_ID,
-        discoveryDocs: DISCOVERY_DOCS,
-        scope: SCOPES,
-      });
+  //     gapi.client.init({
+  //       apiKey: API_KEY,
+  //       clientId: CLIENT_ID,
+  //       discoveryDocs: DISCOVERY_DOCS,
+  //       scope: SCOPES,
+  //     });
 
-      gapi.client.load("calendar", "v3", () => console.log("bam!"));
+  //     gapi.client.load("calendar", "v3", () => console.log("bam!"));
 
-      gapi.auth2
-        .getAuthInstance()
-        .signIn()
-        .then(() => {
-          var event = {
-            summary: "Mobily Event!",
-            conferenceData: {
-              createRequest: {
-                requestId: props.Events[props.SelectedEvent].MainCode,
-                conferenceSolutionKey: { type: "hangoutsMeet" },
-              },
-            },
+  //     gapi.auth2
+  //       .getAuthInstance()
+  //       .signIn()
+  //       .then(() => {
+  //         var event = {
+  //           summary: "Mobily Event!",
+  //           conferenceData: {
+  //             createRequest: {
+  //               requestId: props.Events[props.SelectedEvent].MainCode,
+  //               conferenceSolutionKey: { type: "hangoutsMeet" },
+  //             },
+  //           },
 
-            description: "Really great refreshments",
-            start: {
-              dateTime: "2020-06-28T09:00:00-07:00",
-              timeZone: "America/Los_Angeles",
-            },
-            end: {
-              dateTime: "2020-06-28T17:00:00-07:00",
-              timeZone: "America/Los_Angeles",
-            },
-            recurrence: ["RRULE:FREQ=DAILY;COUNT=2"],
-            attendees: [
-              { email: "lpage@example.com" },
-              { email: "sbrin@example.com" },
-            ],
-            reminders: {
-              useDefault: false,
-              overrides: [
-                { method: "email", minutes: 24 * 60 },
-                { method: "popup", minutes: 10 },
-              ],
-            },
-          };
+  //           description: "Really great refreshments",
+  //           start: {
+  //             dateTime: "2020-06-28T09:00:00-07:00",
+  //             timeZone: "America/Los_Angeles",
+  //           },
+  //           end: {
+  //             dateTime: "2020-06-28T17:00:00-07:00",
+  //             timeZone: "America/Los_Angeles",
+  //           },
+  //           recurrence: ["RRULE:FREQ=DAILY;COUNT=2"],
+  //           attendees: [
+  //             { email: "lpage@example.com" },
+  //             { email: "sbrin@example.com" },
+  //           ],
+  //           reminders: {
+  //             useDefault: false,
+  //             overrides: [
+  //               { method: "email", minutes: 24 * 60 },
+  //               { method: "popup", minutes: 10 },
+  //             ],
+  //           },
+  //         };
 
-          var request = gapi.client.calendar.events.insert({
-            calendarId: "primary",
-            resource: event,
-          });
+  //         var request = gapi.client.calendar.events.insert({
+  //           calendarId: "primary",
+  //           resource: event,
+  //         });
 
-          request.execute((event) => {
-            console.log(event);
-            window.open(event.htmlLink);
+  //         request.execute((event) => {
+  //           console.log(event);
+  //           window.open(event.htmlLink);
 
-            SetCurrentEventDetails({
-              ...CurrentEventDetails,
-              Location: { ...Location, Link: event.htmlLink },
-            });
-          });
+  //           SetCurrentEventDetails({
+  //             ...CurrentEventDetails,
+  //             Location: { ...Location, Link: event.htmlLink },
+  //           });
+  //         });
 
-          /*
-            Uncomment the following block to get events
-        */
-          /*
-        // get events
-        gapi.client.calendar.events.list({
-          'calendarId': 'primary',
-          'timeMin': (new Date()).toISOString(),
-          'showDeleted': false,
-          'singleEvents': true,
-          'maxResults': 10,
-          'orderBy': 'startTime'
-        }).then(response => {
-          const events = response.result.items
-          console.log('EVENTS: ', events)
-        })
-        */
-        });
-    });
-  };
+  //         /*
+  //           Uncomment the following block to get events
+  //       */
+  //         /*
+  //       // get events
+  //       gapi.client.calendar.events.list({
+  //         'calendarId': 'primary',
+  //         'timeMin': (new Date()).toISOString(),
+  //         'showDeleted': false,
+  //         'singleEvents': true,
+  //         'maxResults': 10,
+  //         'orderBy': 'startTime'
+  //       }).then(response => {
+  //         const events = response.result.items
+  //         console.log('EVENTS: ', events)
+  //       })
+  //       */
+  //       });
+  //   });
+  // };
+
   const save = async () => {
     let eventscpy = props.Events;
     let currentEvent = props.SelectedEvent;
@@ -148,13 +147,14 @@ export default function EventDetails(props) {
     eventscpy[props.SelectedEvent] = CurrentEventDetails;
 
     await props.setEvents(eventscpy);
-    props.SelectEvent(0);
+    await props.SelectEvent(0);
     let result = await props.checkIfEventEmpty(eventscpy);
-    console.log(result);
-    if (result.status === true && result.index === null) {
+
+    if (result.status === true) {
       let EventsCopy = [...props.Events];
 
-      props.setDisablesave(true);
+      await props.setDisablesave(true);
+      props.handleNext();
     } else {
       props.SelectEvent(result.index);
     }
@@ -165,7 +165,7 @@ export default function EventDetails(props) {
       Location: Location,
     });
   }, [Location]);
-  useEffect(() => {
+  const changevenue = () => {
     if (
       CurrentEventDetails.VenueType === "Online" ||
       CurrentEventDetails.VenueType === "Both"
@@ -176,7 +176,8 @@ export default function EventDetails(props) {
         Location: "",
       });
     }
-  }, [CurrentEventDetails.VenueType]);
+  };
+
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} sm={12}>
@@ -337,6 +338,7 @@ export default function EventDetails(props) {
             <MenuItem
               className="w-100-p"
               onClick={(e) => {
+                changevenue();
                 SetCurrentEventDetails({
                   ...CurrentEventDetails,
                   VenueType: "Online",
@@ -349,6 +351,7 @@ export default function EventDetails(props) {
             <MenuItem
               className="w-100-p"
               onClick={(e) => {
+                changevenue();
                 SetCurrentEventDetails({
                   ...CurrentEventDetails,
                   VenueType: "Offline",
@@ -361,6 +364,7 @@ export default function EventDetails(props) {
             <MenuItem
               className="w-100-p"
               onClick={(e) => {
+                changevenue();
                 SetCurrentEventDetails({
                   ...CurrentEventDetails,
                   VenueType: "Both",

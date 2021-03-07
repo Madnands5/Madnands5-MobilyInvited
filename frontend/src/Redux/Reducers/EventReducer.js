@@ -30,15 +30,64 @@ const Eventdata = (state = initialState, action) => {
         STORY: [],
       };
     case "GOTMYEVENTS":
+      let datacopy = [];
+      let tracker = [];
+      let mcindex = 0;
+      //get similar events in single array
+      console.log(action.payload);
+      for (let i = 0; i < action.payload.length; i++) {
+        if (tracker.length === 0) {
+          datacopy[0] = [action.payload[i]];
+          tracker.push(action.payload[i].MainCode);
+        } else {
+          mcindex = tracker.includes(action.payload[i].MainCode);
+          if (mcindex === true) {
+            let key = tracker.findIndex(
+              (track) => track === action.payload[i].MainCode
+            );
+            console.log(key);
+            datacopy[key] = [...datacopy[key], action.payload[i]];
+          } else {
+            tracker.push(action.payload[i].MainCode);
+            datacopy.push([action.payload[i]]);
+          }
+        }
+      }
+
       return {
         ...state,
-        myEvents: action.payload,
+        myEvents: datacopy,
       };
-    case "GETMYINVITAITONS":
+    case "GETMYINVITAITONS": {
+      let datacopy = [];
+      let tracker = [];
+      let mcindex = 0;
+      //get similar events in single array
+      console.log(action.payload);
+      for (let i = 0; i < action.payload.length; i++) {
+        if (tracker.length === 0) {
+          datacopy[0] = [action.payload[i]];
+          tracker.push(action.payload[i].MainCode);
+        } else {
+          mcindex = tracker.includes(action.payload[i].MainCode);
+          if (mcindex === true) {
+            let key = tracker.findIndex(
+              (track) => track === action.payload[i].MainCode
+            );
+            console.log(key);
+            datacopy[key] = [...datacopy[key], action.payload[i]];
+          } else {
+            tracker.push(action.payload[i].MainCode);
+            datacopy.push([action.payload[i]]);
+          }
+        }
+      }
+
       return {
         ...state,
-        myInvitations: action.payload,
+        myInvitations: datacopy,
       };
+    }
     default:
       return state;
   }

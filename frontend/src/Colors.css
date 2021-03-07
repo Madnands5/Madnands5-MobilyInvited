@@ -1,18 +1,24 @@
 .black-t {
-  color: black;
+  color: black !important;
 }
 .l-blue-t {
-  color: #3897f1;
+  color: #3897f1 !important;
+}
+.l-blue {
+  background-color: #3897f1 !important;
 }
 .white {
-  background: white;
+  background: white !important;
 }
 .t-white {
-  color: white;
+  color: white !important;
 }
 .grey {
-  background-color: #f6f6f6;
+  background-color: #f6f6f6 !important;
 }
 .blue-border {
-  border: solid #3897f1;
+  border: solid #3897f1 !important;
+}
+.dark-grey {
+  background-color: grey !important;
 }

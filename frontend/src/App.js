@@ -11,6 +11,7 @@ import MobileAuth from "./Components/Auth/MobileAuth";
 import Landingpage from "./Components/LandingPage/Landingpage";
 import Home from "./Components/Home/Home";
 import AddEvent from "./Components/AddEvent/AddEvent";
+import Rsvp from "./Components/Invitations/RSVP/Rsvp";
 function App() {
   const Auth = useSelector((state) => state.Auth);
   if (Auth.isLoggedIn === false) {
@@ -44,6 +45,8 @@ function App() {
             <Route exact path="/Chat/:room" component={AddEvent} />
             <Route exact path="/create-room/" component={AddEvent} />
             <Route exact path="/user-profile" component={AddEvent} />
+            <Route exact path="/inv/RSVP/:id" component={Rsvp} />
+            <Route exact path="/inv/info/:id" component={AddEvent} />
             <Route exact path="/add-event" component={AddEvent} />
             <Route exact path="/*" component={Home} />
           </Switch>

@@ -28,16 +28,16 @@ exports.create = async (req, res) => {
   });
 
   const Invitaitondata = await invitaiton.save();
-  console.log("invitation_createed");
-  console.log(Invitaitondata);
+  // console.log("invitation_createed");
+  // console.log(Invitaitondata);
   //create events
 
-  let Maincode = Events[0].MainCode;
+  let Maincode = Invitaitondata._id.toString();
 
   Events.map(async (eventdata, index) => {
     //setting meeting
     Endtime = eventdata.Time.split(":");
-    console.log(Endtime);
+    // console.log(Endtime);
     Endtime[0] = Endtime[0] + 1;
     if (Endtime[0] < 10) {
       Endtime = "0" + Endtime[0] + Endtime[1];
@@ -47,7 +47,7 @@ exports.create = async (req, res) => {
     console.log("mapping");
     if (eventdata.VenueType === "Online" || eventdata.VenueType === "Both") {
     }
-    console.log(req.user);
+    // console.log(req.user);
     const singleevent = await new Event({
       Name: eventdata.Name,
       InvId: Invitaitondata._id,
@@ -56,11 +56,11 @@ exports.create = async (req, res) => {
       Description: eventdata.Description,
       GuestInvite: eventdata.GuestInvite,
       Location: eventdata.Location,
-      MainCode: eventdata.MainCode,
+      MainCode: Maincode,
       Participants: eventdata.Participants,
       Schedule: eventdata.Schedule,
       VenueType: eventdata.VenueType,
-      eventCode: eventdata.eventCode,
+      eventCode: Maincode + "_" + index,
       file: eventdata.file,
       filetype: eventdata.filetype,
       Host: [user.Phone],
@@ -79,7 +79,7 @@ exports.create = async (req, res) => {
       Admin: user.Phone,
     });
     await group.save();
-    console.log(singleeventdata);
+    // console.log(singleeventdata);
     await createdEventList.push({
       Name: eventdata.Name,
       InvId: Invitaitondata._id,
@@ -98,10 +98,10 @@ exports.create = async (req, res) => {
       Host: [user.Phone],
     });
   });
-
-  console.log(createdEventList);
-  console.log("finale");
-  console.log(Meetingarray);
+  // console.log("createdEventList");
+  // console.log(createdEventList);
+  // console.log("finale");
+  // console.log(Meetingarray);
 
   console.log("sending msgs");
   await twilio.sendtowatsapp(
@@ -120,7 +120,7 @@ exports.RSVP = async (req, res) => {
   try {
     const Events = await Event.findOne({ _id: req.body.id });
     let UpdateEvents = "";
-    console.log(Events._id);
+    // console.log(Events._id);
     let id = Events._id;
     let rsvpdata = "";
     let finaldata = "";
@@ -167,7 +167,7 @@ exports.RSVP = async (req, res) => {
           },
           { new: true, useFindAndModify: false }
         );
-        console.log(finaldata);
+        // console.log(finaldata);
         console.log(" liked updated");
         console.log(finaldata);
       }
@@ -181,6 +181,7 @@ exports.RSVP = async (req, res) => {
     res.json({ err: err });
   }
 };
+
 exports.Like = async (req, res) => {
   try {
     const Events = await Event.findOne({ _id: req.body.id });

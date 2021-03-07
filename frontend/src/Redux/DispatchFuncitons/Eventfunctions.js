@@ -4,7 +4,7 @@ import {
   EVENTSAVED,
   EVENTSAVEFAIL,
   GOTMYEVENTS,
-  GOTMYINVITAITONS,
+  GETMYINVITAITONS,
 } from "../Actions/EventActions";
 
 import history from "../../Utils/History";
@@ -33,10 +33,20 @@ export function GetInvitations() {
   return (dispatch) => {
     axios.get(url + "event/getmyInvitaion").then((res) => {
       dispatch({
-        type: GOTMYINVITAITONS,
+        type: GETMYINVITAITONS,
         payload: res.data,
       });
       console.log(res);
     });
+  };
+}
+export function rsvp_event(id, status, by) {
+  return (dispatch) => {
+    axios
+      .post(url + "event/rsvp", { id: id, status: status, by: by })
+      .then((res) => {
+        dispatch(GetInvitations());
+        console.log(res);
+      });
   };
 }

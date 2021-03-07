@@ -22,15 +22,13 @@ export default function Home(props) {
     <>
       <Header url={props.location.pathname} />
       <Grid container spacing={0}>
-        <Grid item xs={false} sm={false} md={2} />
-        <Grid item xs={12} sm={8} md={8}>
+        <Grid item xs={12} sm={12} md={12}>
           {Menu === 0 ? (
-            <Invitation data={EventState.myEvents} className="w-100" />
+            <Invitation data={EventState.myInvitations} className="w-100" />
           ) : (
             <>My Events</>
           )}
         </Grid>
-        <Grid item xs={false} sm={false} md={2} />
       </Grid>
       <FootMenu menu={Menu} setMenu={setMenu} />
     </>

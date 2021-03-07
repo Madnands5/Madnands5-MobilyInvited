@@ -6,4 +6,27 @@
   .add-Img {
     width: 100% !important;
   }
+  .card {
+    margin-left: auto;
+    align-self: center;
+    width: 100% !important;
+  }
+  .invitaion {
+    width: 98% !important;
+    margin: 1%;
+  }
+  .eventheader {
+  }
+  .back {
+  }
+  .skip {
+  }
+  .eventbuttons {
+    margin: 0 !important;
+    width: 100vw !important;
+  }
+  .dotscontainer {
+    width: 25% !important;
+    left: 40% !important;
+  }
 }

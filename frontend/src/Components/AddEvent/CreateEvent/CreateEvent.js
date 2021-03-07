@@ -62,11 +62,11 @@ export default function CreateEvent(props) {
           }}
         >
           <option aria-label="None" value="" />
-          <option value="Weddings">Weddings</option>
-          <option value="Birthdays">Birthdays</option>
-          <option value="Wedding Anniversaries">Wedding Anniversaries</option>
+          <option value="Wedding">Wedding</option>
+          <option value="Birthday">Birthday</option>
+          <option value="Wedding Anniversary">Wedding Anniversary</option>
           <option value="Get Together">Get Together</option>
-          <option value="Get Together">Formal Event</option>
+          <option value="Formal Event">Formal Event</option>
         </Select>
       </FormControl>
       <div className="w-100-p grey">
@@ -127,6 +127,7 @@ export default function CreateEvent(props) {
           setalbumdata={props.setalbumdata}
           Story={props.Story}
           template={props.template}
+          handleNext={props.handleNext}
         />
       </Grid>
 

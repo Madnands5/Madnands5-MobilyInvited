@@ -1,14 +1,14 @@
 .nodata {
   height: 450px;
-  width: 80%;
+  width: 90%;
   margin: 5%;
 }
 .card {
-  width: 98%;
+  margin-left: auto;
+  align-self: center;
   height: 500px;
-  margin: 1%;
-  background-repeat: no-repeat;
-  background-position-x: center;
+  position: relative;
+  z-index: 1;
 }
 .float-bottom {
   position: relative;
@@ -16,12 +16,29 @@
   text-align: center;
 }
 .rsvp-button {
-  height: 45px;
-  font-size: 20px;
-  background: none;
-  border: solid white;
-  color: white;
-  box-shadow: 2px 1px 9px 3px white;
+  background: white;
+  box-shadow: 1px 1px 8px 1px #3897f1;
   border-radius: 500px;
   width: 100%;
+  padding: 7px;
+  margin: auto;
+  color: #3897f1;
+  border-color: #3897f1;
+}
+.invitaion {
+  background-color: white;
+  box-shadow: 2px 2px 6px 2px grey;
+  border-radius: 5px;
+  margin-top: 10px;
+  width: 98%;
+  margin: 1%;
+}
+.tool-bar {
+  height: 50px;
+  margin-top: 6px;
+  border-top: 5px solid grey;
+  padding-top: 5px;
+}
+.tool-button {
+  padding-top: 5px;
 }

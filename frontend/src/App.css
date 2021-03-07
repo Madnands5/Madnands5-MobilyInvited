@@ -76,3 +76,9 @@
 .fs-small {
   font-size: 8px;
 }
+.mb-100 {
+  margin-bottom: 100px !important;
+}
+.opaque {
+  opacity: 1 !important;
+}

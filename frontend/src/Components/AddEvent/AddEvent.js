@@ -11,7 +11,6 @@ export default function AddEvent(props) {
   const [Type, setType] = useState("");
   const [activeStep, setActiveStep] = useState(0);
 
-  let MainEvent = uuid();
   const [Events, setEvents] = useState([]);
 
   let events = {
@@ -24,8 +23,7 @@ export default function AddEvent(props) {
     VenueType: "Offline",
     Location: "",
     Description: "",
-    MainCode: MainEvent,
-    eventCode: MainEvent + "event" + Events.length,
+
     GuestInvite: false,
     Host: "",
     Co_Host: [],
@@ -37,6 +35,7 @@ export default function AddEvent(props) {
   const handleChange = (event) => {
     setType(event.target.value);
   };
+
   const addAnEvent = async () => {
     if (Events.length < 4) {
       setEvents([...Events, events]);
@@ -74,28 +73,33 @@ export default function AddEvent(props) {
       incompleteeventnumber = i;
       Eventcpy = { ...Events[i] };
       if (Eventcpy.Name === "Event " + (i + 1) || Eventcpy.Name === "") {
+        console.log({ status: false, index: i, component: "Name" });
         return { status: false, index: i, component: "Name" };
       } else if (Eventcpy.Date === "") {
+        console.log({ status: false, index: i, component: "Date" });
         return { status: false, index: i, component: "Date" };
       } else if (Eventcpy.Time === "") {
+        console.log({ status: false, index: i, component: "Time" });
         return { status: false, index: i, component: "Time" };
       } else if (Eventcpy.Description === "") {
+        console.log({ status: false, index: i, component: "Description" });
         return { status: false, index: i, component: "Description" };
       } else if (Eventcpy.VenueType === "") {
+        console.log({ status: false, index: i, component: "VenueType" });
         return { status: false, index: i, component: "VenueType" };
       } else if (Eventcpy.Location === "") {
+        console.log({ status: false, index: i, component: "Location" });
         return { status: false, index: i, component: "Location" };
-      } else if (Eventcpy.MainCode === "") {
-        return { status: false, index: i, component: "MainCode" };
       } else if (Eventcpy.file === "") {
-        return { status: false, index: i, component: "Name" };
+        console.log({ status: false, index: i, component: "file" });
+        return { status: false, index: i, component: "file" };
       } else if (Eventcpy.filetype === "") {
-        return { status: false, index: i, component: "Name" };
+        console.log({ status: false, index: i, component: "filetype" });
+        return { status: false, index: i, component: "filetype" };
       }
-      await "next";
     }
-
-    return { status: result, index: null };
+    console.log({ status: true, index: null, component: "" });
+    return { status: true, index: null, component: "" };
   };
 
   const addfinalDetails = () => {
