@@ -1,6 +1,6 @@
 .RSVP-card {
   width: 100vw;
-  height: 90vh;
+  height: 75vh;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -63,5 +63,5 @@
 .indicator-container {
   position: relative;
   height: 20px;
-  top: 75vh;
+  top: 78vh;
 }

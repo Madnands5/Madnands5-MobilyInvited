@@ -23,7 +23,10 @@ export default function Popup(props) {
             color="secondary"
             className="popup-close"
           />
-          <props.component className="modal-component" />
+          <props.component
+            className="modal-component"
+            hide={props.toggleShowPopup}
+          />
         </div>
       </Modal>
     </div>

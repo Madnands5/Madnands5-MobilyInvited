@@ -12,6 +12,8 @@ import Landingpage from "./Components/LandingPage/Landingpage";
 import Home from "./Components/Home/Home";
 import AddEvent from "./Components/AddEvent/AddEvent";
 import Rsvp from "./Components/Invitations/RSVP/Rsvp";
+import Eventlist from "./Components/Invitations/Info/Eventlist";
+import ChatPage from "./Components/Chat/ChatPage";
 function App() {
   const Auth = useSelector((state) => state.Auth);
   if (Auth.isLoggedIn === false) {
@@ -20,6 +22,7 @@ function App() {
         <div className="App">
           <Switch>
             <Route exact path="/login" component={MobileAuth} />
+
             <Route exact path="/" component={Landingpage} />
             <Route exact path="/*" component={Redirector} />
             <Route exact path="/event/:code/login" component={AddEvent} />
@@ -32,21 +35,12 @@ function App() {
       <Router history={history}>
         <div className="App">
           <Switch>
-            {" "}
             <Route exact path="/home" component={Home} />
-            <Route exact path="/add-event" component={AddEvent} />
-            <Route exact path="/view-Invitations" component={AddEvent} />
-            <Route
-              exact
-              path="/View-Single-Invitaion/:id"
-              component={AddEvent}
-            />
-            <Route exact path="/event/:code/login" component={AddEvent} />
-            <Route exact path="/Chat/:room" component={AddEvent} />
-            <Route exact path="/create-room/" component={AddEvent} />
+            <Route exact path="/add-event" component={ChatPage} />
+            <Route exact path="/chat" component={ChatPage} />
             <Route exact path="/user-profile" component={AddEvent} />
             <Route exact path="/inv/RSVP/:id" component={Rsvp} />
-            <Route exact path="/inv/info/:id" component={AddEvent} />
+            <Route exact path="/inv/info/:id" component={Eventlist} />
             <Route exact path="/add-event" component={AddEvent} />
             <Route exact path="/*" component={Home} />
           </Switch>

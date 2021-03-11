@@ -4,6 +4,8 @@ import {
   GOTOTP,
   OPTEXPIRED,
   OTPVERIFIED,
+  SAVEUSER,
+  LOGOUT,
 } from "../Actions/AuthActions";
 import setAuthToken from "../../Utils/Login";
 import axios from "axios";
@@ -86,5 +88,69 @@ export function loginuser(Phone) {
     } else {
       alert("Auth falied");
     }
+  };
+}
+export function saveuserinfo(Name, Gender, DOB, Image) {
+  return (dispatch) => {
+    const userData = {
+      Name: Name,
+      Gender: Gender,
+      DOB: DOB,
+      Image: Image,
+    };
+    if (Name !== "" && Gender !== "") {
+      axios
+        .post(url + "auth/userinfo", userData)
+        .then((res) => {
+          if (res.data.user) {
+            console.log(res.data.user);
+            dispatch({
+              type: SAVEUSER,
+              payload: res.data.user,
+            });
+          }
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+}
+export function getuserdata(Phone) {
+  const userData = {
+    Phone: Phone,
+  };
+  if (Phone !== "") {
+    axios
+      .get(url + "auth/userinfo", userData)
+      .then((res) => {
+        if (res.data.user) {
+          console.log(res.data.user);
+          return res.data.user;
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        return { err: "error 404" };
+      });
+  }
+}
+export function checktoken() {
+  return (dispatch) => {
+    axios
+      .get(url + "auth/verify")
+      .then((res) => {
+        if (res.data.status !== "valid") {
+          dispatch({
+            type: LOGOUT,
+          });
+          history.push("");
+        } else {
+          history.push("/");
+        }
+      })
+      .catch((err) => {
+        dispatch({
+          type: LOGOUT,
+        });
+      });
   };
 }

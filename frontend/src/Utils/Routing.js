@@ -10,8 +10,10 @@ export default function Redirector() {
   let Phone = reactLocalStorage.get("Phone");
   // let Token = reactLocalStorage.get("Token", true);
   if (ischeck === false || ischeck === undefined || ischeck === "") {
+    console.log("push");
     history.push("/");
   } else {
+    console.log("loginuser");
     dispatch(loginuser(Phone));
   }
   return <div></div>;

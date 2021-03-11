@@ -82,3 +82,15 @@
 .opaque {
   opacity: 1 !important;
 }
+.mt-10px {
+  margin-top: 10px;
+}
+.MuiAvatar-circle {
+  border: solid grey;
+}
+.b-none {
+  border: none !important;
+}
+.b-none:focus {
+  outline: none !important;
+}

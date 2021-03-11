@@ -15,7 +15,7 @@ export default function Rsvp(props) {
   );
   const Auth = useSelector((state) => state.Auth);
   const dispatch = useDispatch();
-  console.log(Eventdata);
+
   const Next = (i) => {
     console.log(i, Eventdata.length);
     if (i < Eventdata.length) {

@@ -1,8 +1,7 @@
 const mongoose = require("mongoose");
 const ChatGroupSchema = new mongoose.Schema({
   Name: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    type: String,
     required: true,
   },
   room: {
@@ -15,6 +14,19 @@ const ChatGroupSchema = new mongoose.Schema({
   },
   Admin: {
     type: String,
+    required: true,
+  },
+  GrpPhoto: {
+    type: String,
+    required: true,
+  },
+  Type: {
+    type: String,
+    default: "INDV",
+  },
+  Uid: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
     required: true,
   },
 });

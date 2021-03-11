@@ -90,13 +90,7 @@ export default function AddParticipants(props) {
     let EventCpy = [...props.Events];
     let MainCode = "";
     for (let i = 0; i < EventCpy.length; i++) {
-      MainCode = EventCpy[i].MainCode;
-      let furl =
-        EventCpy[i].MainCode +
-        "/" +
-        EventCpy[i].eventCode +
-        "." +
-        EventCpy[i].filetype;
+      let furl = EventCpy[i].Name + "/" + i + "." + EventCpy[i].filetype;
       await console.log(furl);
       let url = await uploadString(EventCpy[i].file, furl);
       await console.log(url);

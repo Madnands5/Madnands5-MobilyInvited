@@ -1,0 +1,109 @@
+import React, { useState, useCallback } from "react";
+import { Grid, TextField, Button } from "@material-ui/core";
+import male from "../../Assets/Male.svg";
+import female from "../../Assets/Female.svg";
+import { useDropzone } from "react-dropzone";
+import { uploadString } from "../../Utils/FileUpload_Download";
+import { useSelector, useDispatch } from "react-redux";
+import { saveuserinfo } from "../../Redux/DispatchFuncitons/AuthFunctions";
+export default function UserProfile(props) {
+  const [Name, setName] = useState("");
+  const [DOB, setDOB] = useState("");
+  const [Gender, setGender] = useState("");
+  const [Image, setImage] = useState("");
+  const Auth = useSelector((state) => state.Auth);
+  const dispatch = useDispatch();
+  const onDrop = useCallback(async (acceptedFiles) => {
+    if (acceptedFiles[0].size > 5259265) {
+      alert("Max file size 5mb");
+      return false;
+    }
+    let type = acceptedFiles[0].type.split("/");
+    type = type[1];
+    var reader = await new FileReader();
+    reader.onload = async function () {
+      let url = await uploadString(
+        reader.result,
+        "Profile/" + Auth.Phone + "." + type
+      );
+      await setImage(url);
+    };
+    reader.onerror = function (error) {
+      console.log("Error: ", error);
+    };
+    await reader.readAsDataURL(acceptedFiles[0]);
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    multiple: false,
+    accept: "image/jpeg, image/png, image/jpg",
+  });
+  const save = () => {
+    if ((Name !== "" && DOB !== "") || Gender !== "" || Image !== "") {
+      dispatch(saveuserinfo(Name, Gender, DOB, Image));
+      props.hide(false);
+    }
+  };
+
+  return (
+    <Grid container spacing={0}>
+      <Grid item xs={6} {...getRootProps()}>
+        <input {...getInputProps()} />
+        <center
+          onClick={() => {
+            setGender("M");
+          }}
+        >
+          <img src={male} />
+        </center>
+      </Grid>
+      <Grid item xs={6} {...getRootProps()}>
+        <input {...getInputProps()} />
+        <center
+          onClick={() => {
+            setGender("F");
+          }}
+        >
+          <img src={female} />
+        </center>
+      </Grid>
+      <Grid item xs={12}>
+        <TextField
+          label="Name"
+          variant="outlined"
+          className="w-100 m-b-5px "
+          value={Name}
+          onChange={(e) => {
+            setName(e.target.value);
+          }}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <TextField
+          label="DOB"
+          variant="outlined"
+          className="w-100 m-b-5px "
+          type="date"
+          defaultValue="2017-05-24"
+          value={DOB}
+          onChange={(e) => {
+            setDOB(e.target.value);
+          }}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <Button
+          variant="contained"
+          color="primary"
+          className="w-100 m-b-5px"
+          onClick={() => {
+            save();
+          }}
+        >
+          Save
+        </Button>
+      </Grid>
+    </Grid>
+  );
+}

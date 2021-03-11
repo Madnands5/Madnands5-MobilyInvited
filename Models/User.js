@@ -10,6 +10,12 @@ const UserSchema = new mongoose.Schema({
   Gender: {
     type: String,
   },
+  DOB: {
+    type: String,
+  },
+  Pic: {
+    type: String,
+  },
   Groups: [
     {
       type: mongoose.Schema.Types.ObjectId,

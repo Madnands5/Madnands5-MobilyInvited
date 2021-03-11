@@ -5,6 +5,9 @@ import Toolbar from "@material-ui/core/Toolbar";
 import AddIcon from "@material-ui/icons/Add";
 import "./FooterMenu.css";
 import history from "../../../Utils/History";
+import { useSelector } from "react-redux";
+import Popup from "../Popups/Popup";
+import UserProfile from "../../UserPorfile/UserProfile";
 const useStyles = makeStyles((theme) => ({
   text: {
     padding: theme.spacing(2, 2, 0),
@@ -40,6 +43,8 @@ const useStyles = makeStyles((theme) => ({
 export default function FootMenu(props) {
   const classes = useStyles();
   const [menu, setMenu] = useState(0);
+  const Auth = useSelector((state) => state.Auth);
+  const [useiinfopopup, setuserInfopopup] = useState(false);
   return (
     <AppBar
       position="fixed"
@@ -52,7 +57,11 @@ export default function FootMenu(props) {
           aria-label="add"
           className={classes.fabButton}
           onClick={() => {
-            history.push("/add-event");
+            if (Auth.Name === "" || Auth.Name === undefined) {
+              setuserInfopopup(true);
+            } else {
+              history.push("/add-event");
+            }
           }}
         >
           <AddIcon />
@@ -80,6 +89,11 @@ export default function FootMenu(props) {
           </Grid>
         </Grid>
       </Toolbar>
+      <Popup
+        component={UserProfile}
+        toggleShowPopup={setuserInfopopup}
+        showPopup={useiinfopopup}
+      />
     </AppBar>
   );
 }

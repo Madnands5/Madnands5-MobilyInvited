@@ -50,3 +50,23 @@ export function rsvp_event(id, status, by) {
       });
   };
 }
+export function like_event(id, status, by) {
+  return (dispatch) => {
+    axios
+      .post(url + "event/like", { id: id, status: status, by: by })
+      .then((res) => {
+        dispatch(GetInvitations());
+        console.log(res);
+      });
+  };
+}
+export function comment_event(id, status, by) {
+  return (dispatch) => {
+    axios
+      .post(url + "event/comment", { id: id, status: status, by: by })
+      .then((res) => {
+        dispatch(GetInvitations());
+        console.log(res);
+      });
+  };
+}

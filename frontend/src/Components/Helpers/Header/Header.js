@@ -13,14 +13,17 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import MailIcon from "@material-ui/icons/Mail";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
+import { Avatar } from "@material-ui/core";
 import "./Header.css";
 import Headings from "../../../Utils/Headings";
+import UserData from "../UserData/UserData";
+import { useSelector } from "react-redux";
 export default function Header(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
+  const Auth = useSelector((state) => state.Auth);
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -84,9 +87,8 @@ export default function Header(props) {
           aria-haspopup="true"
           color="inherit"
         >
-          <AccountCircle />
+          <Avatar alt="Profile Picture" src={Auth.Pic} />
         </IconButton>
-        <p>Profile</p>
       </MenuItem>
     </Menu>
   );
@@ -128,7 +130,11 @@ export default function Header(props) {
               onClick={handleProfileMenuOpen}
               color="inherit"
             >
-              <AccountCircle />
+              {Auth.Profile === undefined || Auth.Profile == "" ? (
+                <AccountCircle />
+              ) : (
+                <Avatar alt="Profile Picture" src={Auth.Profile} />
+              )}
             </IconButton>
           </div>
           <div className="sectionMobile">

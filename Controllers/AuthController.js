@@ -15,7 +15,7 @@ exports.login = async (req, res) => {
     console.log("called login");
     const user = await User.findOne({
       Phone: req.body.Phone,
-    });
+    }).populate("Groups");
 
     if (user) {
       console.log("found login");
@@ -54,13 +54,64 @@ exports.login = async (req, res) => {
     res.send(error);
   }
 };
+exports.getuserdetails = async (req, res) => {
+  try {
+    console.log("getuserdetails");
+    const token = req.header("auth");
+    const verified = jwt.verify(token, process.env.jwt_secret);
+    req.user = verified;
+    console.log(req.user);
+    console.log(req.body);
+    let nocountry = req.body.Phone.slice(req.body.Phone.length - 10);
+    console.log(nocountry);
+    const user = await User.findOne({
+      $or: [{ Phone: req.body.Phone }, { Phone: nocountry }],
+    });
+    console.log("usre");
+    console.log(user);
+    if (!user) {
+      res.json({ status: "fail", err: "invalid user", user });
+    } else {
+      res.json({ status: "success", user: { Name: user.Name, Pic: user.Pic } });
+    }
+  } catch (err) {
+    console.log(err);
+    res.json({ status: "fail", err: err });
+  }
+};
+
 exports.userdetails = async (req, res) => {
+  try {
+    const token = req.header("auth");
+    const verified = jwt.verify(token, process.env.jwt_secret);
+    req.user = verified;
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        Name: req.body.Name,
+        Gender: req.body.Gender,
+        DOB: req.body.DOB,
+        Pic: req.body.Image,
+      },
+      { new: true, useFindAndModify: false }
+    );
+
+    res.json({ status: "success", user: user });
+  } catch (err) {
+    res.json({ status: "failed", err: err });
+  }
+};
+exports.verify = async (req, res) => {
   const token = req.header("auth");
-  const verified = jwt.verify(token, process.env.jwt_secret);
-  req.user = verified;
-  const user = await User.findByIdAndUpdate(
-    req.user._id,
-    { Name: req.body.name, Gender: req.body.gender },
-    { new: true, useFindAndModify: false }
-  );
+  if (token === undefined || token == "") {
+    res.json({ status: "invalid" });
+  } else {
+    const verified = jwt.verify(token, process.env.jwt_secret);
+    req.user = verified;
+    if (!verified) {
+      res.json({ status: "invalid" });
+    } else {
+      res.json({ status: "valid" });
+    }
+  }
 };

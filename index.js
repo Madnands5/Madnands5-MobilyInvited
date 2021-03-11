@@ -9,7 +9,7 @@ const app = require("express")();
 const server = require("http").createServer(app);
 const authRoute = require("./Routes/Auth.js");
 const eventRoute = require("./Routes/Event.js");
-
+const chatRoute = require("./Routes/ChatGroup.js");
 const options = {
   /* ... */
 };
@@ -53,6 +53,7 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(cors());
 app.use("/auth", authRoute);
 app.use("/event", eventRoute);
+app.use("/chatgroup", chatRoute);
 let PORT = process.env.PORT || 8080;
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("frontend/build"));

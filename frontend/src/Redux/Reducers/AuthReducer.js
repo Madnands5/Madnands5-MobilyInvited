@@ -7,6 +7,11 @@ const initialState = {
   Message: "",
   OTPStatus: false,
   isVerified: false,
+  Name: "",
+  DOB: "",
+  Gender: "",
+  Profile: "",
+  MYGroups: [],
 };
 
 const Auth = (state = initialState, action) => {
@@ -24,7 +29,12 @@ const Auth = (state = initialState, action) => {
         ...state,
         isLoggedIn: true,
         Phone: action.payload.user.Phone,
+        Name: action.payload.user.Name,
+        DOB: action.payload.user.DOB,
+        Gender: action.payload.user.Gender,
+        Profile: action.payload.user.Pic,
         Token: action.payload.token,
+        MYGroups: action.payload.user.Groups,
         Message: "",
       };
     case "LOGOUT":
@@ -66,6 +76,16 @@ const Auth = (state = initialState, action) => {
         OTPStatus: true,
         isVerified: false,
         Message: "Invalid Input",
+      };
+    }
+    case "SAVEUSER": {
+      console.log(action.payload);
+      return {
+        ...state,
+        Name: action.payload.Name,
+        Gender: action.payload.Gender,
+        DOB: action.payload.DOB,
+        Profile: action.payload.Pic,
       };
     }
     default:

@@ -9,7 +9,7 @@ const Meeting = require("google-meet-api").meet;
 const User = require("../Models/User.js");
 const jwt = require("jsonwebtoken");
 const { json } = require("body-parser");
-const chatGroup = require("../Models/ChatGroups");
+const ChatGroups = require("../Models/ChatGroups");
 const Post = require("../Models/Posts");
 
 exports.create = async (req, res) => {
@@ -72,31 +72,47 @@ exports.create = async (req, res) => {
       .catch((err) => {
         console.log(err);
       });
-    const group = new chatGroup({
-      Name: eventdata.Name,
-      room: eventdata.eventCode,
-      Participants: Participants,
-      Admin: user.Phone,
-    });
-    await group.save();
+    try {
+      const group = await new ChatGroups({
+        Name: eventdata.Name,
+        room: eventdata.eventCode,
+        Participants: [...eventdata.Participants, user.Phone],
+        Admin: user.Phone,
+        GrpPhoto: eventdata.file,
+        Type: "GRP",
+        Uid: user._id,
+      });
+      const grpdetails = await group.save();
+      let options = { upsert: true, new: true, setDefaultsOnInsert: true };
+      let ref = await User.findOneAndUpdate(
+        { _id: req.user._id },
+        {
+          $push: { Groups: grpdetails._id },
+        },
+        options
+      );
+    } catch (err) {
+      console.log(err);
+    }
+
     // console.log(singleeventdata);
-    await createdEventList.push({
-      Name: eventdata.Name,
-      InvId: Invitaitondata._id,
-      Date: eventdata.Date,
-      Time: eventdata.Time,
-      Description: eventdata.Description,
-      GuestInvite: eventdata.GuestInvite,
-      Location: eventdata.Location,
-      MainCode: eventdata.MainCode,
-      Participants: eventdata.Participants,
-      Schedule: eventdata.Schedule,
-      VenueType: eventdata.VenueType,
-      eventCode: eventdata.eventCode,
-      file: eventdata.file,
-      filetype: eventdata.filetype,
-      Host: [user.Phone],
-    });
+    //   await createdEventList.push({
+    //     Name: eventdata.Name,
+    //     InvId: Invitaitondata._id,
+    //     Date: eventdata.Date,
+    //     Time: eventdata.Time,
+    //     Description: eventdata.Description,
+    //     GuestInvite: eventdata.GuestInvite,
+    //     Location: eventdata.Location,
+    //     MainCode: eventdata.MainCode,
+    //     Participants: eventdata.Participants,
+    //     Schedule: eventdata.Schedule,
+    //     VenueType: eventdata.VenueType,
+    //     eventCode: eventdata.eventCode,
+    //     file: eventdata.file,
+    //     filetype: eventdata.filetype,
+    //     Host: [user.Phone],
+    // });
   });
   // console.log("createdEventList");
   // console.log(createdEventList);

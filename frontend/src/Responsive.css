@@ -29,4 +29,8 @@
     width: 25% !important;
     left: 40% !important;
   }
+  .infocard {
+    width: 90vw !important;
+    margin-left: 5vw !important;
+  }
 }

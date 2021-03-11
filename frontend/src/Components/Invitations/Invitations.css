@@ -6,9 +6,10 @@
 .card {
   margin-left: auto;
   align-self: center;
+  height: auto;
+  object-fit: contain;
+  width: 100%;
   height: 500px;
-  position: relative;
-  z-index: 1;
 }
 .float-bottom {
   position: relative;
