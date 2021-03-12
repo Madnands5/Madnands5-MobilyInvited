@@ -51,13 +51,13 @@ mongoose.connection.on("disconnected", function () {
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(cors());
-app.use("/auth", authRoute);
-app.use("/event", eventRoute);
-app.use("/chatgroup", chatRoute);
+app.use("/api/auth", authRoute);
+app.use("/api/event", eventRoute);
+app.use("/api/chatgroup", chatRoute);
 let PORT = process.env.PORT || 8080;
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static("frontend/build"));
-}
+
+app.use(express.static("frontend/build"));
+
 server.listen(PORT, () =>
   console.log("server:http://localhost:" + process.env.PORT + "/")
 );
