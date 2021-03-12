@@ -13,7 +13,8 @@
     "heroku-postbuild": "npm run  install-client && npm run build",
     "start": "nodemon index.js",
     "client": "cd frontend && npm start",
-    "dev": "concurrently \"npm start\" \"npm  run client\""
+    "dev": "concurrently \"npm start\" \"npm  run client\"",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install npm && run build"
   },
   "author": "",
   "license": "ISC",
@@ -40,5 +41,8 @@
     "twilio": "^3.55.1",
     "uuid": "^8.3.2",
     "uuidv4": "^6.2.6"
+  },
+  "engines": {
+    "node": "10.16.0"
   }
 }
