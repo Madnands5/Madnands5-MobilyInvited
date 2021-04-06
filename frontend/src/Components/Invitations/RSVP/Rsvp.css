@@ -48,7 +48,7 @@
   width: 100px;
   padding: 8px;
   border-radius: 15px;
-  border: solid white;
+  border: solid white 1px;
   box-shadow: 4px 3px 7px 2px grey;
   background: #4b8ae8;
 }
@@ -64,4 +64,29 @@
   position: relative;
   height: 20px;
   top: 78vh;
+}
+.RSVP-AVATAR {
+  position: relative;
+  z-index: 20;
+  top: 5px;
+  right: 20px;
+}
+.rsvp-img {
+  width: 100%;
+  height: 500px;
+  object-fit: contain;
+  position: relative;
+  z-index: 0;
+  bottom: 75px;
+  background: rgba(0, 0, 0, 0.3);
+  -webkit-filter: brightness(70%);
+}
+.RSVP-avatar {
+  position: relative;
+  left: 30px;
+}
+.rsvpoptions {
+  position: relative;
+  bottom: 130px;
+  left: 1vw;
 }

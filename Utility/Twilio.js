@@ -53,7 +53,7 @@ const sendtowatsapp = async (recievers, body) => {
   Promise.all(
     recievers.map((number) => {
       if (number.toString().length <= 10) {
-        console.log("whatsapp: +91" + number);
+        // console.log("whatsapp: +91" + number);
         return client.messages.create({
           body: body,
           from: "whatsapp:+14155238886",

@@ -1,0 +1,9 @@
+.no-proifle{
+    border: solid red;
+    border-radius: 20px;
+}
+.Profile{
+    height: 120px;
+    width: 100px;
+    object-fit: contain;
+}

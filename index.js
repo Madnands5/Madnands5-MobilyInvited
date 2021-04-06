@@ -10,6 +10,7 @@ const server = require("http").createServer(app);
 const authRoute = require("./Routes/Auth.js");
 const eventRoute = require("./Routes/Event.js");
 const chatRoute = require("./Routes/ChatGroup.js");
+const Notification = require("./Routes/Notification");
 const options = {
   /* ... */
 };
@@ -54,6 +55,8 @@ app.use(cors());
 app.use("/api/auth", authRoute);
 app.use("/api/event", eventRoute);
 app.use("/api/chatgroup", chatRoute);
+app.use("/api/notification", Notification);
+
 let PORT = process.env.PORT || 8080;
 
 app.use(express.static("frontend/build"));

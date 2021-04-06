@@ -35,7 +35,13 @@ const Eventdata = (state = initialState, action) => {
       let mcindex = 0;
       //get similar events in single array
       console.log(action.payload);
-      for (let i = 0; i < action.payload.length; i++) {
+      let payload = [];
+      if (action.payload !== undefined) {
+        payload = [...action.payload];
+      } else {
+        payload = [];
+      }
+      for (let i = 0; i < payload.length; i++) {
         if (tracker.length === 0) {
           datacopy[0] = [action.payload[i]];
           tracker.push(action.payload[i].MainCode);
@@ -64,7 +70,14 @@ const Eventdata = (state = initialState, action) => {
       let mcindex = 0;
       //get similar events in single array
       console.log(action.payload);
-      for (let i = 0; i < action.payload.length; i++) {
+      let payload = [];
+      if (action.payload !== undefined) {
+        payload = [...action.payload];
+      } else {
+        payload = [];
+      }
+
+      for (let i = 0; i < payload.length; i++) {
         if (tracker.length === 0) {
           datacopy[0] = [action.payload[i]];
           tracker.push(action.payload[i].MainCode);

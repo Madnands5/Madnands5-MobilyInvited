@@ -11,6 +11,8 @@ import {
   Modal,
   Button,
 } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import "./CreateEvent.css";
 import AddImg from "../../../Assets/AddImage.svg";
 import Scehedule from "../../../Assets/schedule.svg";
 import Storyimg from "../../../Assets/AddStory.svg";
@@ -21,15 +23,32 @@ import Album from "../Extras/Album";
 import Story from "../Extras/Story";
 import AddSchedule from "../Extras/Schedule";
 import ImageSelectionModal from "./ImageSelectionModal";
+import AddDetails from "../AddDetails/AddDetails";
+import { editform } from "../../../Redux/DispatchFuncitons/EventCreationFormFunction";
+import { SAVEFORM } from "../../../Redux/Actions/EventCreationFormActions";
+import { useDispatch } from "react-redux";
 export default function EventDetails(props) {
+  const useStyles = makeStyles((theme) => ({
+    notchedOutline: {
+      borderWidth: "3px",
+      borderColor: "#3897f1 !important",
+      borderRadius: "150px",
+      color: "#3897f1 !important",
+    },
+  }));
+
+  const classes = useStyles();
+
   const [processing, setProcessing] = useState(false);
   const [showPopup, toggleShowPopup] = useState(false);
   const [CurrentEventDetails, SetCurrentEventDetails] = useState({
     ...props.Events[props.SelectedEvent],
   });
+  const [IsSubmitted, setSubmit] = useState(false);
   const [shedulevisible, SetScheduleVisible] = useState(false);
   const [storyvisible, SetStoryVisible] = useState(false);
   const [albumvisible, SetAlbumVisible] = useState(false);
+  const [Link, setLink] = useState("");
   const [Location, setLocation] = useState("");
   useEffect(() => {
     if (props.Events[props.SelectedEvent] !== undefined) {
@@ -55,116 +74,36 @@ export default function EventDetails(props) {
   ];
   var SCOPES = "https://www.googleapis.com/auth/calendar.events";
 
-  // const CreateMeeting = () => {
-  //   gapi.load("client:auth2", () => {
-  //     console.log("loaded client");
-
-  //     gapi.client.init({
-  //       apiKey: API_KEY,
-  //       clientId: CLIENT_ID,
-  //       discoveryDocs: DISCOVERY_DOCS,
-  //       scope: SCOPES,
-  //     });
-
-  //     gapi.client.load("calendar", "v3", () => console.log("bam!"));
-
-  //     gapi.auth2
-  //       .getAuthInstance()
-  //       .signIn()
-  //       .then(() => {
-  //         var event = {
-  //           summary: "Mobily Event!",
-  //           conferenceData: {
-  //             createRequest: {
-  //               requestId: props.Events[props.SelectedEvent].MainCode,
-  //               conferenceSolutionKey: { type: "hangoutsMeet" },
-  //             },
-  //           },
-
-  //           description: "Really great refreshments",
-  //           start: {
-  //             dateTime: "2020-06-28T09:00:00-07:00",
-  //             timeZone: "America/Los_Angeles",
-  //           },
-  //           end: {
-  //             dateTime: "2020-06-28T17:00:00-07:00",
-  //             timeZone: "America/Los_Angeles",
-  //           },
-  //           recurrence: ["RRULE:FREQ=DAILY;COUNT=2"],
-  //           attendees: [
-  //             { email: "lpage@example.com" },
-  //             { email: "sbrin@example.com" },
-  //           ],
-  //           reminders: {
-  //             useDefault: false,
-  //             overrides: [
-  //               { method: "email", minutes: 24 * 60 },
-  //               { method: "popup", minutes: 10 },
-  //             ],
-  //           },
-  //         };
-
-  //         var request = gapi.client.calendar.events.insert({
-  //           calendarId: "primary",
-  //           resource: event,
-  //         });
-
-  //         request.execute((event) => {
-  //           console.log(event);
-  //           window.open(event.htmlLink);
-
-  //           SetCurrentEventDetails({
-  //             ...CurrentEventDetails,
-  //             Location: { ...Location, Link: event.htmlLink },
-  //           });
-  //         });
-
-  //         /*
-  //           Uncomment the following block to get events
-  //       */
-  //         /*
-  //       // get events
-  //       gapi.client.calendar.events.list({
-  //         'calendarId': 'primary',
-  //         'timeMin': (new Date()).toISOString(),
-  //         'showDeleted': false,
-  //         'singleEvents': true,
-  //         'maxResults': 10,
-  //         'orderBy': 'startTime'
-  //       }).then(response => {
-  //         const events = response.result.items
-  //         console.log('EVENTS: ', events)
-  //       })
-  //       */
-  //       });
-  //   });
-  // };
-
   const save = async () => {
+    debugger;
     let eventscpy = props.Events;
     let currentEvent = props.SelectedEvent;
     console.log(CurrentEventDetails);
     eventscpy[props.SelectedEvent] = CurrentEventDetails;
 
     await props.setEvents(eventscpy);
-    await props.SelectEvent(0);
-    let result = await props.checkIfEventEmpty(eventscpy);
+    // await props.SelectEvent(0);
 
+    let result = await props.checkIfEventEmpty(
+      eventscpy,
+      props.Type,
+      props.seterroring,
+      props.SelectedEvent
+    );
+    await setSubmit(true);
     if (result.status === true) {
       let EventsCopy = [...props.Events];
-
       await props.setDisablesave(true);
+
       props.handleNext();
     } else {
-      props.SelectEvent(result.index);
+      console.log("result false");
+      console.log(IsSubmitted);
+      await props.SelectEvent(result.index);
+      console.log(result.index);
     }
   };
-  useEffect(() => {
-    SetCurrentEventDetails({
-      ...CurrentEventDetails,
-      Location: Location,
-    });
-  }, [Location]);
+
   const changevenue = () => {
     if (
       CurrentEventDetails.VenueType === "Online" ||
@@ -177,6 +116,14 @@ export default function EventDetails(props) {
       });
     }
   };
+  const dispatch = useDispatch();
+
+  const updatereduxform = async (data) => {
+    await dispatch({
+      type: SAVEFORM,
+      payload: data,
+    });
+  };
 
   return (
     <Grid container spacing={2}>
@@ -186,7 +133,11 @@ export default function EventDetails(props) {
           <center>
             <img
               src={AddImg}
-              className="add-Img"
+              className={
+                IsSubmitted === true
+                  ? "add-Img error-box m-b-25px"
+                  : "add-Img m-b-25px"
+              }
               onClick={() => {
                 toggleShowPopup(true);
               }}
@@ -208,8 +159,8 @@ export default function EventDetails(props) {
               }}
               className={
                 processing === true
-                  ? "transparent uploaded-file w-100"
-                  : "notTransparent uploaded-file w-100"
+                  ? "transparent uploaded-file w-100 m-b-25px"
+                  : "notTransparent uploaded-file w-100 m-b-25px"
               }
             />
           ) : (
@@ -228,8 +179,8 @@ export default function EventDetails(props) {
               preload="none"
               className={
                 processing === true
-                  ? " transparent w-100"
-                  : "notTransparent w-100"
+                  ? " transparent w-100 m-b-25px"
+                  : "notTransparent w-100 m-b-25px"
               }
             />
           )
@@ -265,35 +216,50 @@ export default function EventDetails(props) {
                 setDisablesave={props.setDisablesave}
                 CurrentEventDetails={CurrentEventDetails}
                 SetCurrentEventDetails={SetCurrentEventDetails}
+                show={toggleShowPopup}
               />
             </div>
           </Modal>
         </div>
       </Grid>
       <Grid item xs={12}>
+        <span className="label">Type</span>
         <TextField
           id="outlined-basics"
-          label="Enter Event Name"
           variant="outlined"
-          className="w-100-p"
+          className="w-100-p m-b-25px"
+          size="small"
           value={CurrentEventDetails.Name}
-          onChange={(e) => {
+          onChange={async (e) => {
             SetCurrentEventDetails({
               ...CurrentEventDetails,
               Name: e.target.value,
             });
           }}
+          error={
+            IsSubmitted === true && CurrentEventDetails.Name === ""
+              ? true
+              : false
+          }
+          InputProps={{
+            classes: {
+              notchedOutline: classes.notchedOutline,
+            },
+          }}
         />
       </Grid>
       <Grid item xs={6}>
+        <span className="label">Date</span>
         <TextField
           id="date"
-          label="Date"
+          // label="Date"
           type="date"
+          variant="outlined"
           InputLabelProps={{
             shrink: true,
           }}
-          className="w-100-p"
+          size="small"
+          className="w-100-p m-b-25px"
           value={CurrentEventDetails.Date}
           onChange={(e) => {
             SetCurrentEventDetails({
@@ -301,17 +267,30 @@ export default function EventDetails(props) {
               Date: e.target.value,
             });
           }}
+          error={
+            IsSubmitted === true && CurrentEventDetails.Date === ""
+              ? true
+              : false
+          }
+          InputProps={{
+            classes: {
+              notchedOutline: classes.notchedOutline,
+            },
+          }}
         />
       </Grid>
       <Grid item xs={6}>
+        <span className="label">Time</span>
         <TextField
           id="time"
-          label="Time"
+          // label="Time"
+          variant="outlined"
           type="time"
+          size="small"
           InputLabelProps={{
             shrink: true,
           }}
-          className="w-100-p"
+          className="w-100-p m-b-25px"
           inputProps={{
             step: 300, // 5 min
           }}
@@ -324,17 +303,61 @@ export default function EventDetails(props) {
               Time: e.target.value,
             });
           }}
+          error={
+            IsSubmitted === true && CurrentEventDetails.Time === ""
+              ? true
+              : false
+          }
+          InputProps={{
+            classes: {
+              notchedOutline: classes.notchedOutline,
+            },
+          }}
         />
       </Grid>
-      <Grid item xs={4}>
-        <FormControl variant="outlined" className="w-100-p">
-          <InputLabel id="demo-simple-select-label">Type</InputLabel>
+      <Grid item xs={5} sm={4}>
+        <FormControl
+          variant="outlined"
+          className="w-100-p m-b-25px"
+          size="small"
+          variant="outlined"
+          InputProps={{
+            classes: {
+              notchedOutline: classes.notchedOutline,
+            },
+          }}
+        >
+          <span className="label">Type</span>
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            className="w-100-p"
+            className="w-100-p selectboxblue"
             value={CurrentEventDetails.VenueType}
+            error={
+              IsSubmitted === true && CurrentEventDetails.VenueType === ""
+                ? true
+                : false
+            }
+            variant="outlined"
+            InputProps={{
+              classes: {
+                notchedOutline: classes.notchedOutline,
+              },
+            }}
           >
+            <MenuItem
+              className="w-100-p"
+              onClick={(e) => {
+                changevenue();
+                SetCurrentEventDetails({
+                  ...CurrentEventDetails,
+                  VenueType: "Online-Inapp",
+                });
+              }}
+              value="Online-Inapp"
+            >
+              Online-Inapp
+            </MenuItem>
             <MenuItem
               className="w-100-p"
               onClick={(e) => {
@@ -348,6 +371,7 @@ export default function EventDetails(props) {
             >
               Online
             </MenuItem>
+
             <MenuItem
               className="w-100-p"
               onClick={(e) => {
@@ -378,119 +402,108 @@ export default function EventDetails(props) {
         </FormControl>
       </Grid>
 
-      {CurrentEventDetails.VenueType === "Online" ? (
-        <>
-          {" "}
-          <Grid item xs={8}>
-            <TextField
-              id="outlined-basic"
-              label="Place Meeting Links here"
-              variant="outlined"
-              className="w-100-p"
-              value={CurrentEventDetails.Location}
-              onChange={(e) => {
-                SetCurrentEventDetails({
-                  ...CurrentEventDetails,
-                  Location: e.target.value,
-                });
-              }}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => {
-                window.open("https://meet.google.com/", "_blank");
-              }}
-            >
-              Use Google-Meet
-            </Button>
-          </Grid>{" "}
-          <Grid item xs={6}>
-            {" "}
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => {
-                window.open("https://zoom.us/", "_blank");
-              }}
-            >
-              Use Zoom Calls
-            </Button>
-          </Grid>
-        </>
-      ) : CurrentEventDetails.VenueType === "Offline" ? (
-        <>
-          <Grid item xs={12} sm={12} md={12}>
-            <Map
-              SetCurrentEventDetails={SetCurrentEventDetails}
-              CurrentEventDetails={CurrentEventDetails}
-              center={{ lat: 20.5937, lng: 78.9629 }}
-              height="300px"
-              zoom={12}
-              setLocation={setLocation}
-            />
-          </Grid>
-        </>
-      ) : (
-        <>
-          {" "}
-          <Grid item xs={8}>
-            <TextField
-              id="outlined-basic"
-              label="Place Meeting Links here"
-              variant="outlined"
-              className="w-100-p"
-              value={CurrentEventDetails.Location}
-              onChange={(e) => {
-                SetCurrentEventDetails({
-                  ...CurrentEventDetails,
-                  Location: e.target.value,
-                });
-              }}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <Button
-              variant="outlined"
-              onClick={() => {
-                window.open("https://meet.google.com/", "_blank");
-              }}
-            >
-              Use Google-Meet
-            </Button>
-          </Grid>{" "}
-          <Grid item xs={6}>
-            {" "}
-            <Button
-              variant="outlined"
-              onClick={() => {
-                window.open("https://www.geeksforgeeks.org", "_blank");
-              }}
-            >
-              Use zoom
-            </Button>
-          </Grid>
-          <Grid item xs={12} sm={12} md={12}>
-            <Map
-              SetCurrentEventDetails={SetCurrentEventDetails}
-              CurrentEventDetails={CurrentEventDetails}
-              center={{ lat: 20.5937, lng: 78.9629 }}
-              height="300px"
-              zoom={12}
-              setLocation={setLocation}
-            />
-          </Grid>{" "}
-        </>
-      )}
+      <>
+        <Grid
+          item
+          xs={7}
+          sm={8}
+          className={
+            CurrentEventDetails.VenueType === "Online" ||
+            CurrentEventDetails.VenueType === "Both"
+              ? "show pt-18px"
+              : "hide pt-18px"
+          }
+        >
+          <span className="label">Place Meeting Links here</span>
+          <TextField
+            id="outlined-basic"
+            size="small"
+            variant="outlined"
+            className="w-100-p m-b-25px mt-10px"
+            value={CurrentEventDetails.Link}
+            onChange={(e) => {
+              SetCurrentEventDetails({
+                ...CurrentEventDetails,
+                Link: e.target.value,
+                Location: "",
+              });
+            }}
+            error={
+              IsSubmitted === true && CurrentEventDetails.Link === ""
+                ? true
+                : false
+            }
+            InputProps={{
+              classes: {
+                notchedOutline: classes.notchedOutline,
+              },
+            }}
+          />
+        </Grid>
+        <Grid
+          item
+          xs={CurrentEventDetails.VenueType === "Offline" ? 7 : 12}
+          sm={CurrentEventDetails.VenueType === "Offline" ? 7 : 12}
+          className={
+            CurrentEventDetails.VenueType === "Online" ||
+            CurrentEventDetails.VenueType === "Online-Inapp"
+              ? "hide"
+              : "show"
+          }
+        >
+          <Map
+            SetCurrentEventDetails={SetCurrentEventDetails}
+            CurrentEventDetails={CurrentEventDetails}
+            center={{ lat: 20.5937, lng: 78.9629 }}
+            height="300px"
+            zoom={12}
+            setLocation={setLocation}
+            Location={Location}
+            type={"Offline"}
+          />
+          <span
+            className={
+              IsSubmitted === true && CurrentEventDetails.Location === ""
+                ? "error"
+                : "hide"
+            }
+          >
+            Please add Location
+          </span>
+        </Grid>
+      </>
 
       <Grid item xs={12}>
+        <span className="label">Description</span>
+        {/* <TextField
+          id="standard-name"
+          label="Name"
+          className={classes.textField}
+          value={this.state.name}
+          onChange={this.handleChange('name')}
+          margin="normal"
+          variant="outlined"
+          InputLabelProps={{
+            classes: {
+              root: classes.cssLabel,
+              focused: classes.cssFocused,
+            },
+          }}
+          InputProps={{
+            classes: {
+              root: classes.cssOutlinedInput,
+              focused: classes.cssFocused,
+              notchedOutline: classes.notchedOutline,
+            },
+            inputMode: "numeric"
+          }}
+        /> */}
         <TextField
           id="outlined-basic"
-          label="Description"
+          // label="Description"
+          size="small"
           variant="outlined"
-          className="w-100-p"
+          className="w-100-p m-7px m-b-25px "
           value={CurrentEventDetails.Description}
           onChange={(e) => {
             SetCurrentEventDetails({
@@ -498,9 +511,19 @@ export default function EventDetails(props) {
               Description: e.target.value,
             });
           }}
+          error={
+            IsSubmitted === true && CurrentEventDetails.Description === ""
+              ? true
+              : false
+          }
+          InputProps={{
+            classes: {
+              notchedOutline: classes.notchedOutline,
+            },
+          }}
         />
       </Grid>
-      <Grid item xs={8} className="talc fs-bold">
+      <Grid item xs={8} className="talc fs-bold m-b-25px fsm">
         Guest can Invite (max 3)
       </Grid>
       <Grid item xs={4}>
@@ -518,11 +541,15 @@ export default function EventDetails(props) {
           }}
         />
       </Grid>
-      <Grid item xs={12} md={4}>
+      <Grid
+        item
+        xs={props.SelectedEvent === 0 ? 4 : 12}
+        md={props.SelectedEvent === 0 ? 4 : 12}
+      >
         <Paper elevation={3} className="schedule-card">
           <center>
             <img src={Scehedule} alt="schedule" className="schedule-icon" />
-            <h3>Add new Schedule</h3>
+            <h4 className="mfs"> Schedule</h4>
             <button
               className="add-schedule"
               onClick={() => {
@@ -537,21 +564,15 @@ export default function EventDetails(props) {
           <Modal
             aria-labelledby="transition-modal-title"
             aria-describedby="transition-modal-description"
-            className="modal"
+            className="f-s-modal"
             open={shedulevisible}
             onClose={() => {
               SetScheduleVisible(false);
             }}
           >
-            <div className="modal-card">
-              <CancelIcon
-                onClick={() => {
-                  SetScheduleVisible(false);
-                }}
-                color="secondary"
-                className="popup-close"
-              />
-              <AddSchedule
+            <div className="f-s-modal-card">
+              <AddDetails
+                Name="Schedule"
                 className="modal-component"
                 data={props.Events}
                 setEvents={props.setEvents}
@@ -562,6 +583,7 @@ export default function EventDetails(props) {
                 SelectedEvent={props.SelectedEvent}
                 SetCurrentEventDetails={SetCurrentEventDetails}
                 SetScheduleVisible={SetScheduleVisible}
+                open={SetScheduleVisible}
               />
             </div>
           </Modal>
@@ -569,11 +591,11 @@ export default function EventDetails(props) {
       </Grid>
       {props.SelectedEvent === 0 ? (
         <>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={4} md={4}>
             <Paper elevation={3} className="schedule-card">
               <center>
                 <img src={Storyimg} alt="schedule" className="schedule-icon" />
-                <h3>Add new Story</h3>
+                <h4 className="mfs"> Story</h4>
                 <button
                   className="add-schedule"
                   onClick={() => {
@@ -588,36 +610,36 @@ export default function EventDetails(props) {
               <Modal
                 aria-labelledby="transition-modal-title"
                 aria-describedby="transition-modal-description"
-                className="modal"
+                className="f-s-modal"
                 open={storyvisible}
                 onClose={() => {
                   SetStoryVisible(false);
                 }}
               >
-                <div className="modal-card">
-                  <CancelIcon
-                    onClick={() => {
-                      SetStoryVisible(false);
-                    }}
-                    color="secondary"
-                    className="popup-close"
-                  />
-
-                  <Story
+                <div className="f-s-modal-card">
+                  <AddDetails
+                    Name="Story"
                     className="modal-component"
-                    setStory={props.setStory}
-                    Story={props.Story}
-                    SetStoryVisible={SetStoryVisible}
+                    data={props.Events}
+                    setEvents={props.setEvents}
+                    SelectEvent={props.SelectEvent}
+                    SelectedEvent={props.SelectedEvent}
+                    CurrentEventDetails={CurrentEventDetails}
+                    Events={props.Events}
+                    SelectedEvent={props.SelectedEvent}
+                    SetCurrentEventDetails={SetCurrentEventDetails}
+                    SetScheduleVisible={SetScheduleVisible}
+                    open={SetStoryVisible}
                   />
                 </div>
               </Modal>
             </div>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={4} md={4}>
             <Paper elevation={3} className="schedule-card">
               <center>
                 <img src={Albumsimg} alt="schedule" className="schedule-icon" />
-                <h3>Add Albums</h3>
+                <h4 className="mfs"> Albums</h4>
                 <button
                   className="add-schedule"
                   onClick={() => {
@@ -632,25 +654,26 @@ export default function EventDetails(props) {
               <Modal
                 aria-labelledby="transition-modal-title"
                 aria-describedby="transition-modal-description"
-                className="modal"
+                className="f-s-modal"
                 open={albumvisible}
                 onClose={() => {
                   SetAlbumVisible(false);
                 }}
               >
-                <div className="modal-card">
-                  <CancelIcon
-                    onClick={() => {
-                      SetAlbumVisible(false);
-                    }}
-                    color="secondary"
-                    className="popup-close"
-                  />
-                  <Album
+                <div className="f-s-modal-card">
+                  <AddDetails
+                    Name="Album"
                     className="modal-component"
-                    setalbumdata={props.setalbumdata}
-                    albumdata={props.albumdata}
-                    SetAlbumVisible={SetAlbumVisible}
+                    data={props.Events}
+                    setEvents={props.setEvents}
+                    SelectEvent={props.SelectEvent}
+                    SelectedEvent={props.SelectedEvent}
+                    CurrentEventDetails={CurrentEventDetails}
+                    Events={props.Events}
+                    SelectedEvent={props.SelectedEvent}
+                    SetCurrentEventDetails={SetCurrentEventDetails}
+                    SetScheduleVisible={SetScheduleVisible}
+                    open={SetAlbumVisible}
                   />
                 </div>
               </Modal>

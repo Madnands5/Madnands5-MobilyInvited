@@ -20,13 +20,18 @@ const EventSchema = new mongoose.Schema({
   },
   Location: {
     type: String,
-    required: true,
+  },
+  Link: {
+    type: String,
   },
   MainCode: {
     type: String,
     required: true,
   },
   Participants: {
+    type: Array,
+  },
+  Notifyto: {
     type: Array,
   },
   Schedule: {

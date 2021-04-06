@@ -1,44 +1,61 @@
 import React, { useState } from "react";
-import Logo from "../../Assets/Logo.svg";
-import CardButtons from "../../Assets/cardButtons.svg";
-import Background from "../../Assets/HomePageBg.svg";
-import { Grid } from "@material-ui/core";
-import MobileAuth from "../Auth/MobileAuth";
-import Popup from "../Helpers/Popups/Popup";
-import "./Landingpage.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "swiper/swiper-bundle.min.css";
+import "react-modal-video/css/modal-video.min.css";
+import "./css/Landingpage.css";
+import "./css/animate.min.css";
+import "./css/apton-icons.css";
+import "./css/style.css";
+import "./css/responsive.css";
+import "./css/fontawesome-all.min.css";
 import LoginSignup from "../Auth/LoginSignup";
+import Banner from "./Banner";
+import Clients from "./Clients";
+import Contact from "./Contact";
+import CTAOne from "./CTAOne";
+import CTATwo from "./CTATwo";
+import FAQ from "./FAQ";
+import Footer from "./Footer";
+import Header from "./Header";
+import Layout from "./Layout";
+import MobileMenu from "./MobileMenu";
+import Pricing from "./Pricing";
+import Services from "./Services";
+import Testimonials from "./Testimonials";
+import VideoOne from "./VideoOne";
+import Popup from "../Helpers/Popups/Popup";
+
 export default function Landingpage() {
   const [showPopup, toggleShowPopup] = useState(false);
-  return (
-    <Grid container spacing={0}>
-      <Grid item xs={12} sm={12} md={8} className="landing-header">
-        <img src={Logo} className="logo" alt="logo" />
-      </Grid>
-      <Grid item xs={false} sm={false} md={4}>
-        <button
-          className="login"
-          onClick={() => {
-            toggleShowPopup(true);
-          }}
-        >
-          Login/Sign-up
-        </button>
-      </Grid>
 
-      <Grid item xs={12} sm={12} md={6} className="padding-left-3">
-        <span className="landignpage-large-text">Multiple Events</span>
-        <p> Manage Multiple Events Simultaniously</p>
-        <img src={CardButtons} className="card-buttons" alt="CardButtons" />
-        <MobileAuth />
-      </Grid>
-      <Grid item xs={12} sm={12} md={6}>
-        <img src={Background} className="Background" alt="Background" />
-      </Grid>
+  return (
+    <div>
       <Popup
         toggleShowPopup={toggleShowPopup}
         showPopup={showPopup}
         component={LoginSignup}
       />
-    </Grid>
+      <Layout pageTitle="Mobilly Invite">
+        <Header
+          btnClass="main-nav__btn"
+          extraClassName="site-header-one__fixed-top"
+          toggleShowPopup={toggleShowPopup}
+        />
+        <MobileMenu />
+        <Banner toggleShowPopup={toggleShowPopup} />
+        <Services />
+        <CTAOne />
+        <CTATwo />
+        <Pricing />
+        <Testimonials />
+        <Clients />
+        <VideoOne />
+        <br />
+        <br />
+        <FAQ />
+        <Contact />
+        <Footer />
+      </Layout>
+    </div>
   );
 }

@@ -1,0 +1,96 @@
+@media only screen and (max-width: 786px) {
+  .schedule-icon {
+    width: 20% !important;
+    left: 40% !important;
+  }
+  .add-Img {
+    width: 100% !important;
+  }
+  .card {
+    margin-left: auto;
+    align-self: center;
+    width: 100% !important;
+  }
+  .invitaion {
+    width: 98% !important;
+    margin: 1%;
+  }
+  .mobile-only {
+    display: block !important;
+  }
+  .desktop-only {
+    display: none !important;
+  }
+  .eventbuttons {
+    margin: 0 !important;
+    width: 100vw !important;
+  }
+  .dotscontainer {
+    width: 25% !important;
+    left: 40% !important;
+  }
+  .infocard {
+    width: 90vw !important;
+    margin-left: 5vw !important;
+  }
+  .Notifyme {
+    left: 88% !important;
+  }
+  .inv-img {
+    margin: 0 !important;
+    object-fit: cover !important;
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 0 !important;
+  }
+  .save-event {
+    width: 100% !important;
+    float: none;
+  }
+  .toggler {
+    display: none !important;
+  }
+  .Back-Nav {
+    display: block !important;
+  }
+  .event-buttons {
+    font-size: 9px !important;
+  }
+  .InvitationCard {
+    height: 250px !important;
+  }
+  .inv-img {
+    height: 250px !important;
+  }
+  .bottom-bar {
+    bottom: 30% !important;
+  }
+  .popup-close {
+    left: 90% !important;
+  }
+  .down-float {
+    position: none !important;
+    top: 0 !important;
+    left: 0 !important;
+  }
+  .excel-file-upload {
+    width: 95% !important;
+  }
+  .rsvpoptions {
+    left: 5vw !important;
+  }
+  .add-album {
+    left: 5% !important;
+    width: 90% !important;
+  }
+  .add-button {
+    left: 80% !important;
+  }
+  .noe {
+    margin-top: 0 !important;
+    margin-bottom: 10px !important;
+  }
+  .plancard {
+    width: 97% !important;
+  }
+}

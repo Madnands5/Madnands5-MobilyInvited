@@ -3,7 +3,7 @@ const Event = require("../Models/Events");
 const RSVP = require("../Models/Rsvp");
 const Likes = require("../Models/Likes");
 const Comments = require("../Models/Comments");
-const Notifications = require("../Models/Notifications");
+
 const twilio = require("../Utility/Twilio");
 const Meeting = require("google-meet-api").meet;
 const User = require("../Models/User.js");
@@ -11,9 +11,9 @@ const jwt = require("jsonwebtoken");
 const { json } = require("body-parser");
 const ChatGroups = require("../Models/ChatGroups");
 const Post = require("../Models/Posts");
-
+const { findByIdAndUpdate } = require("../Models/Events");
+const Notify = require("../Models/Notify");
 exports.create = async (req, res) => {
-  // console.log(req.body);
   let createdEventList = [];
   let Meetingarray = [];
   const token = req.header("auth");
@@ -22,19 +22,17 @@ exports.create = async (req, res) => {
   const user = await User.findOne({ _id: req.user._id });
   const Events = req.body.Events;
 
-  const invitaiton = await new Invitaion({
+  const invitaition = await new Invitaion({
     Type: req.body.Type,
     Host: [user.Phone],
+    Story: req.body.Story,
+    Album: req.body.Album,
   });
 
-  const Invitaitondata = await invitaiton.save();
-  // console.log("invitation_createed");
-  // console.log(Invitaitondata);
-  //create events
-
+  const Invitaitondata = await invitaition.save();
   let Maincode = Invitaitondata._id.toString();
-
-  Events.map(async (eventdata, index) => {
+  await Events.map(async (eventdata, index) => {
+    console.log(eventdata);
     //setting meeting
     Endtime = eventdata.Time.split(":");
     // console.log(Endtime);
@@ -45,9 +43,13 @@ exports.create = async (req, res) => {
       Endtime = Endtime[0] + Endtime[1];
     }
     console.log("mapping");
-    if (eventdata.VenueType === "Online" || eventdata.VenueType === "Both") {
+    if (eventdata.VenueType === "Online") {
+      eventdata.Location = "";
+    } else if (eventdata.VenueType === "Offline") {
+      eventdata.Link = "";
+    } else {
     }
-    // console.log(req.user);
+
     const singleevent = await new Event({
       Name: eventdata.Name,
       InvId: Invitaitondata._id,
@@ -56,8 +58,10 @@ exports.create = async (req, res) => {
       Description: eventdata.Description,
       GuestInvite: eventdata.GuestInvite,
       Location: eventdata.Location,
+      Link: eventdata.Link,
       MainCode: Maincode,
       Participants: eventdata.Participants,
+      Notifyto: eventdata.Participants,
       Schedule: eventdata.Schedule,
       VenueType: eventdata.VenueType,
       eventCode: Maincode + "_" + index,
@@ -66,71 +70,89 @@ exports.create = async (req, res) => {
       Host: [user.Phone],
     });
 
-    let singleeventdata = await singleevent
-      .save()
-      .then(async () => {})
-      .catch((err) => {
-        console.log(err);
-      });
+    let singleeventdata = await singleevent.save();
+
     try {
       const group = await new ChatGroups({
         Name: eventdata.Name,
-        room: eventdata.eventCode,
+        room: Maincode + "_" + index,
         Participants: [...eventdata.Participants, user.Phone],
         Admin: user.Phone,
         GrpPhoto: eventdata.file,
         Type: "GRP",
         Uid: user._id,
       });
+
       const grpdetails = await group.save();
       let options = { upsert: true, new: true, setDefaultsOnInsert: true };
-      let ref = await User.findOneAndUpdate(
+      await User.findOneAndUpdate(
         { _id: req.user._id },
         {
           $push: { Groups: grpdetails._id },
         },
         options
       );
+
+      await Invitaion.findByIdAndUpdate(
+        Invitaitondata._id,
+        {
+          $push: { EventList: singleeventdata._id },
+        },
+        options
+      );
     } catch (err) {
       console.log(err);
+      res.json({ status: "failed", err: err });
     }
 
-    // console.log(singleeventdata);
-    //   await createdEventList.push({
-    //     Name: eventdata.Name,
-    //     InvId: Invitaitondata._id,
-    //     Date: eventdata.Date,
-    //     Time: eventdata.Time,
-    //     Description: eventdata.Description,
-    //     GuestInvite: eventdata.GuestInvite,
-    //     Location: eventdata.Location,
-    //     MainCode: eventdata.MainCode,
-    //     Participants: eventdata.Participants,
-    //     Schedule: eventdata.Schedule,
-    //     VenueType: eventdata.VenueType,
-    //     eventCode: eventdata.eventCode,
-    //     file: eventdata.file,
-    //     filetype: eventdata.filetype,
-    //     Host: [user.Phone],
-    // });
+    Meetingarray = await Meetingarray.concat(eventdata.Participants);
+    Meetingarray = await [...new Set(Meetingarray)];
+
+    if (index === Events.length - 1) {
+      console.log(Meetingarray);
+      console.log(112);
+      // console.log("last" + index);
+      //send links to participants
+      await twilio.sendtowatsapp(
+        Meetingarray,
+        "You have been Mobily invited in celeration of " +
+          req.body.Type +
+          "Click here to join:https://www.google.com/" +
+          Maincode
+      );
+
+      // const notify = await new Notify({
+      //   Notification:
+      //     "You have been Mobily invited in celeration of " +
+      //     req.body.Type +
+      //     "By" +
+      //     user.Name,
+      //   to: Meetingarray,
+      //   Eid: Maincode,
+      // });
+      // await notify.save();
+      const Notifydata = await new Notify({
+        Notification:
+          "You have been Mobily invited in celeration of " +
+          req.body.Type +
+          " By " +
+          user.Name,
+        to: Meetingarray,
+      });
+      await Notifydata.save()
+        .then(() => {
+          return "Success";
+        })
+        .catch(() => {
+          return "failed";
+        });
+    }
   });
-  // console.log("createdEventList");
-  // console.log(createdEventList);
-  // console.log("finale");
-  // console.log(Meetingarray);
 
-  console.log("sending msgs");
-  await twilio.sendtowatsapp(
-    Meetingarray,
-    "You have been Mobily invited in celeration of " +
-      req.body.Type +
-      "Click here to join:https://www.google.com/" +
-      Maincode
-  );
-  //send links to participants
-  // Events.map(async (singleevent, index) => {});
+  console.log("result");
+  console.log({ createdEventList: createdEventList, Maincode: Maincode });
 
-  res.json({ createdEventList });
+  res.json({ createdEventList: createdEventList, Maincode: Maincode });
 };
 exports.RSVP = async (req, res) => {
   try {
@@ -317,7 +339,7 @@ exports.GetMyEvents = async (req, res) => {
   let nocountryPhone = parseInt(Phone[1].substring(2));
   console.log(nocountryPhone);
   const Events = await Event.find({
-    $or: [{ Participants: Phone[1] }, { Participants: nocountryPhone }],
+    $or: [{ Host: Phone[1] }, { Host: nocountryPhone }],
   }).populate("InvId LikeList CommentList RSVPList");
 
   res.json(Events);

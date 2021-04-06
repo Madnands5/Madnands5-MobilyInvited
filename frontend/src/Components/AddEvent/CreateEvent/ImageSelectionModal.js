@@ -19,6 +19,7 @@ export default function ImageSelectionModal(props) {
     reader.onload = async function () {
       EventsCpy.file = reader.result;
       await props.SetCurrentEventDetails(EventsCpy);
+      props.show(false);
     };
     reader.onerror = function (error) {
       console.log("Error: ", error);

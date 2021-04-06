@@ -196,6 +196,7 @@ const mapContainerStyle = {
   height: "400px",
   width: "100%",
   border: "solid",
+  display: "none",
 };
 const options = {
   styles: mapStyles,
@@ -252,11 +253,20 @@ export default function Map(props) {
           ...props.CurrentEventDetails,
           Location: location,
         });
-        props.setLocation(location);
-        // props.SetCurrentEventDetails({
-        //   ...props.CurrentEventDetails,
-        //   Location: location,
-        // });
+        // props.setLocation(location);
+        // if (props.CurrentEventDetails.VenueType === "Offline") {
+        //   props.SetCurrentEventDetails({
+        //     ...props.CurrentEventDetails,
+        //     Location: location,
+        //     Link: "",
+        //   });
+        // } else {
+        //   props.SetCurrentEventDetails({
+        //     ...props.CurrentEventDetails,
+        //     Location: location,
+        //   });
+        // }
+
         console.log(faddress);
       },
       (error) => {
@@ -273,13 +283,9 @@ export default function Map(props) {
   const panTo = useCallback(({ lat, lng }) => {
     let location = JSON.stringify({ lat, lng });
     console.log(location);
-    props.SetCurrentEventDetails({
-      ...props.CurrentEventDetails,
-      Location: location,
-    });
 
     mapRef.current.panTo({ lat, lng });
-    mapRef.current.setZoom(25);
+    mapRef.current.setZoom(20);
   }, []);
 
   if (loadError) return "Error";
@@ -289,7 +295,12 @@ export default function Map(props) {
     <div>
       <h1></h1>
 
-      <Search panTo={panTo} Location={Location} />
+      <Search
+        panTo={panTo}
+        Location={Location}
+        CurrentEventDetails={props.CurrentEventDetails}
+        SetCurrentEventDetails={props.SetCurrentEventDetails}
+      />
 
       <GoogleMap
         id="map"
@@ -300,6 +311,7 @@ export default function Map(props) {
         onClick={onMapClick}
         onLoad={onMapLoad}
         options={{ scrollwheel: false }}
+        style={{ display: "none" }}
       >
         {markers.map((marker) => (
           <Marker
@@ -328,7 +340,8 @@ export default function Map(props) {
   );
 }
 
-function Search({ panTo }, props) {
+function Search(props) {
+  console.log(props);
   const {
     ready,
     value,
@@ -351,13 +364,27 @@ function Search({ panTo }, props) {
   const handleSelect = async (address) => {
     setValue(address, false);
     clearSuggestions();
-
+    debugger;
     try {
       const results = await getGeocode({ address });
       const { lat, lng } = await getLatLng(results[0]);
 
-      panTo({ lat, lng });
+      props.panTo({ lat, lng });
       console.log(results);
+      let location = await JSON.stringify({ lat, lng, address });
+
+      if (props.CurrentEventDetails.VenueType === "Offline") {
+        await props.SetCurrentEventDetails({
+          ...props.CurrentEventDetails,
+          Location: location,
+          Link: "",
+        });
+      } else {
+        await props.SetCurrentEventDetails({
+          ...props.CurrentEventDetails,
+          Location: location,
+        });
+      }
     } catch (error) {
       console.log("😱 Error: ", error);
     }
@@ -365,13 +392,26 @@ function Search({ panTo }, props) {
 
   return (
     <div className="w-100">
-      <Combobox onSelect={handleSelect}>
+      <Combobox
+        onSelect={handleSelect}
+        CurrentEventDetails={props.CurrentEventDetails}
+        setCurrentEventDetails={props.setCurrentEventDetails}
+      >
+        <span
+          className={
+            props.CurrentEventDetails.VenueType === "Offline"
+              ? "label mt-10px "
+              : "label"
+          }
+        >
+          Location
+        </span>
         <ComboboxInput
           value={value}
           onChange={handleInput}
           disabled={!ready}
           Placeholder="Search your location"
-          className="locationSearch"
+          className={"locationSearch"}
         />
         <ComboboxPopover>
           <ComboboxList>

@@ -1,113 +1,59 @@
-import React, { useEffect, useState } from "react";
-import { Grid, Button, TextField } from "@material-ui/core";
-import io from "socket.io-client";
-import { useSelector } from "react-redux";
+import React from "react";
+import { Grid, Paper, InputBase, Divider, IconButton } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import AttachFileIcon from "@material-ui/icons/AttachFile";
 
-export default function Chatbox(props) {
-  const Auth = useSelector((state) => state.Auth);
-  let socket = io("http://localhost:5000/", { transports: ["websocket"] });
-  const room = props.url;
-  const [chats, setChat] = useState([]);
-  const [joined, setjoined] = useState(false);
-  const [message, setMessage] = useState("");
-
-  function submit() {
-    if (message !== "") {
-      console.log("submit");
-      socket.emit("message", {
-        _id: Math.random(),
-        sender: Auth.id,
-        content: message,
-        room: room,
-      });
-      setMessage("");
-    }
-    var elem = document.getElementById("chatbox");
-    elem.scrollTop = elem.scrollHeight;
-  }
-  function savechat(data) {
-    setChat((chats) => [...chats, data]);
-    console.log(chats);
-  }
-
-  const updateField = (e) => {
-    setMessage(e.target.value);
-  };
-  useEffect(() => {
-    socket.on(
-      "init",
-      (msg) => {
-        console.log("connected");
-        if (joined === false) {
-          socket.emit("room", { r_name: room, name: Auth.id });
-          console.log("room");
-        }
-
-        socket.on("joined_room", (msg) => {
-          setjoined(true);
-          let messages = JSON.stringify(msg);
-          console.log("joined");
-          //console.log(msg)
-          setChat((chats) => msg);
-          console.log(chats);
-          var elem = document.getElementById("chatbox");
-          elem.scrollTop = elem.scrollHeight;
-        });
-      },
-      ["abc"]
-    );
-
-    socket.on("message_push", (data) => {
-      setChat((chats) => [...chats, data]);
-    });
-    var elem = document.getElementById("chatbox");
-    elem.scrollTop = elem.scrollHeight;
-  });
-
+import SendIcon from "@material-ui/icons/Send";
+const useStyles = makeStyles((theme) => ({
+  root: {
+    padding: "2px 4px",
+    display: "flex",
+    alignItems: "center",
+    width: "96%",
+    marginLeft: "1%",
+    background: " #f5f0f0",
+    borderRadius: "500px",
+  },
+  input: {
+    marginLeft: theme.spacing(1),
+    flex: 1,
+  },
+  iconButton: {
+    padding: 10,
+  },
+  divider: {
+    height: 28,
+    margin: 4,
+  },
+}));
+export default function Chatbox() {
+  const classes = useStyles();
   return (
-    <Grid container spacing={0}>
-      <Grid className="ChatHeader" xs={12}></Grid>
-      <Grid className="chatbox " id="chatbox" xs={12}>
-        {chats.map((chat) =>
-          chat.sender === Auth.id ? (
-            <div key={chat._id} className="me">
-              {chat.content}
-            </div>
-          ) : (
-            <div key={chat._id} className="other">
-              {chat.content}
-            </div>
-          )
-        )}
+    <Grid container spacing={0} className="h100p">
+      <Grid item xs={12} className="chat">
+        <div className="recieved">hi</div>
+        <div className="sender">hello</div>
       </Grid>
-      <Grid className="Submitplus" xs={9}>
-        {/* <Form.Control
-          type="text"
-          placeholder="Say Hi"
-          name="content"
-          value={form.content}
-          onChange={updateField}
-          className="chatinp"
-        /> */}
-        <TextField
-          placeholder="Say Hi"
-          name="content"
-          value={message}
-          onChange={updateField}
-          className="chatinp w-100"
-          variant="outlined"
-        />
-      </Grid>
-      <Grid className="Submitplus" xs={3}>
-        <Button
-          variant="dark"
-          className="w-100"
-          onClick={(e) => {
-            submit(e);
-          }}
-        >
-          <b>Send</b>
-        </Button>
+      <Grid item xs={12} className="inputbox">
+        <Paper component="form" className={classes.root}>
+          <IconButton className={classes.iconButton} aria-label="menu">
+            <AttachFileIcon className="tilt" />
+          </IconButton>
+          <InputBase
+            className={classes.input}
+            placeholder="Search Google Maps"
+            inputProps={{ "aria-label": "search google maps" }}
+          />
+
+          <Divider className={classes.divider} orientation="vertical" />
+          <IconButton
+            color="primary"
+            className={classes.iconButton}
+            aria-label="directions"
+          >
+            <SendIcon />
+          </IconButton>
+        </Paper>
       </Grid>
     </Grid>
   );

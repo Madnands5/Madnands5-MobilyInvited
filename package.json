@@ -2,19 +2,17 @@
   "name": "mobilly-invite",
   "version": "1.0.0",
   "engines": {
-    "node": "14.x",
-    "npm": "6.x"
+    "node": "10.16.0"
   },
   "description": "",
   "main": "index.js",
   "scripts": {
     "build": "cd frontend && npm run build",
     "install-client": "cd client && npm install",
-    "heroku-postbuild": "npm run  install-client && npm run build",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install npm && run build",
     "start": "nodemon index.js",
     "client": "cd frontend && npm start",
-    "dev": "concurrently \"npm start\" \"npm  run client\"",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install npm && run build"
+    "dev": "concurrently \"npm start\" \"npm  run client\""
   },
   "author": "",
   "license": "ISC",
@@ -37,12 +35,10 @@
     "react-dropzone": "^11.2.4",
     "react-google-maps": "^9.4.5",
     "react-google-recaptcha": "^2.1.0",
+    "react-id-swiper": "^4.0.0",
     "socket.io": "^3.0.4",
     "twilio": "^3.55.1",
     "uuid": "^8.3.2",
     "uuidv4": "^6.2.6"
-  },
-  "engines": {
-    "node": "10.16.0"
   }
 }

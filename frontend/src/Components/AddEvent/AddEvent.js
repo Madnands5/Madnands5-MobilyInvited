@@ -5,12 +5,16 @@ import { Grid } from "@material-ui/core";
 import HorizontalLinearStepper from "./Stepper/Stepper";
 import CreateEvent from "./CreateEvent/CreateEvent";
 import AddParticipants from "../AddEvent/AddParticipants/AddParticipants";
-import uuid from "react-uuid";
-
+import Toggler from "../Helpers/EventInvitoggler/Toggler";
+import BackNavBar from "../Helpers/BackNavbar/BackNavBar";
+import Back from "../../Assets/Back.svg";
+import history from "../../Utils/History";
+import { useSelector } from "react-redux";
+import Plan from "../Plan/Plan";
 export default function AddEvent(props) {
-  const [Type, setType] = useState("");
+  const [Type, setType] = useState("Wedding");
   const [activeStep, setActiveStep] = useState(0);
-
+  const CreateEventForm = useSelector((state) => state.CreateEventForm);
   const [Events, setEvents] = useState([]);
 
   let events = {
@@ -20,10 +24,10 @@ export default function AddEvent(props) {
     filetype: "",
     Date: "",
     Time: "",
-    VenueType: "Offline",
+    VenueType: "Online",
     Location: "",
+    Link: "",
     Description: "",
-
     GuestInvite: false,
     Host: "",
     Co_Host: [],
@@ -63,16 +67,60 @@ export default function AddEvent(props) {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const checkIfEventEmpty = async (eventscpy) => {
+  const checkIfEventEmpty = async (eventscpy, Type, seterroring, index) => {
+    if (Type === "") {
+      seterroring(true);
+      return { status: false, index: 0, component: "Type" };
+    }
     console.log(Events);
     let Eventcpy = [...Events];
     let result = true;
     let incompleteeventnumber = null;
+    //check for event first
+    Eventcpy = { ...Events[index] };
+    if (Eventcpy.Name === "") {
+      console.log({ status: false, index: index, component: "Name" });
+      return { status: false, index: index, component: "Name" };
+    } else if (Eventcpy.Date === "") {
+      console.log({ status: false, index: index, component: "Date" });
+      return { status: false, index: index, component: "Date" };
+    } else if (Eventcpy.Time === "") {
+      console.log({ status: false, index: index, component: "Time" });
+      return { status: false, index: index, component: "Time" };
+    } else if (Eventcpy.Description === "") {
+      console.log({ status: false, index: index, component: "Description" });
+      return { status: false, index: index, component: "Description" };
+    } else if (Eventcpy.VenueType === "") {
+      console.log({ status: false, index: index, component: "VenueType" });
+      return { status: false, index: index, component: "VenueType" };
+    } else if (
+      Eventcpy.VenueType === "Both" &&
+      (Eventcpy.Location === "" || Eventcpy.Link === "")
+    ) {
+      console.log({
+        status: false,
+        index: index,
+        component: "Both Location Link",
+      });
+      return { status: false, index: index, component: "Location" };
+    } else if (Eventcpy.VenueType === "Online" && Eventcpy.Link === "") {
+      console.log({ status: false, index: index, component: "Link" });
+      return { status: false, index: index, component: "Location" };
+    } else if (Eventcpy.VenueType === "Offline" && Eventcpy.Location === "") {
+      console.log({ status: false, index: index, component: "Link" });
+      return { status: false, index: index, component: "Location" };
+    } else if (Eventcpy.file === "") {
+      console.log({ status: false, index: index, component: "file" });
+      return { status: false, index: index, component: "file" };
+    } else if (Eventcpy.filetype === "") {
+      console.log({ status: false, index: index, component: "filetype" });
+      return { status: false, index: index, component: "filetype" };
+    }
 
     for (let i = 0; i < Events.length; i++) {
       incompleteeventnumber = i;
       Eventcpy = { ...Events[i] };
-      if (Eventcpy.Name === "Event " + (i + 1) || Eventcpy.Name === "") {
+      if (Eventcpy.Name === "") {
         console.log({ status: false, index: i, component: "Name" });
         return { status: false, index: i, component: "Name" };
       } else if (Eventcpy.Date === "") {
@@ -87,8 +135,21 @@ export default function AddEvent(props) {
       } else if (Eventcpy.VenueType === "") {
         console.log({ status: false, index: i, component: "VenueType" });
         return { status: false, index: i, component: "VenueType" };
-      } else if (Eventcpy.Location === "") {
-        console.log({ status: false, index: i, component: "Location" });
+      } else if (
+        Eventcpy.VenueType === "Both" &&
+        (Eventcpy.Location === "" || Eventcpy.Link === "")
+      ) {
+        console.log({
+          status: false,
+          index: i,
+          component: "Both Location Link",
+        });
+        return { status: false, index: i, component: "Location" };
+      } else if (Eventcpy.VenueType === "Online" && Eventcpy.Link === "") {
+        console.log({ status: false, index: i, component: "Link" });
+        return { status: false, index: i, component: "Location" };
+      } else if (Eventcpy.VenueType === "Offline" && Eventcpy.Location === "") {
+        console.log({ status: false, index: i, component: "Link" });
         return { status: false, index: i, component: "Location" };
       } else if (Eventcpy.file === "") {
         console.log({ status: false, index: i, component: "file" });
@@ -98,6 +159,7 @@ export default function AddEvent(props) {
         return { status: false, index: i, component: "filetype" };
       }
     }
+
     console.log({ status: true, index: null, component: "" });
     return { status: true, index: null, component: "" };
   };
@@ -150,19 +212,7 @@ export default function AddEvent(props) {
           />
         );
       case 1:
-        return (
-          <div>
-            <h1>Payments</h1>
-            <button
-              className="custom-file-upload"
-              onClick={() => {
-                handleNext();
-              }}
-            >
-              Next
-            </button>
-          </div>
-        );
+        return <Plan handleNext={handleNext} handleBack={handleBack} />;
       case 2:
         return (
           <AddParticipants
@@ -189,9 +239,18 @@ export default function AddEvent(props) {
   return (
     <>
       <Header url={props.location.pathname} />
-      <Grid container spacing={0} className="p-15px">
+      <Toggler toggle={console.log("toggle")} locaiton={"eve"} />
+      <BackNavBar
+        logo={<img src={Back} />}
+        Name={"Create Event"}
+        functionality={() => {
+          history.push("/MyEvents");
+        }}
+      />
+      <Grid container spacing={0} className="p-15px pt-0">
         <Grid item xs={false} sm={2} md={2} />
-        <Grid item xs={12} sm={8} md={8} className="p-15px">
+
+        <Grid item xs={12} sm={8} md={8} className="p-15px pt-0">
           <HorizontalLinearStepper
             handleNext={handleNext}
             handleBack={handleBack}

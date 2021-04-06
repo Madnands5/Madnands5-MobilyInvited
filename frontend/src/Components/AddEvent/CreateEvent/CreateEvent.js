@@ -16,13 +16,23 @@ import Uploading from "../../../Assets/Uploading.svg";
 import EventDetails from "./EventDetails";
 import ImageSelectionModal from "./ImageSelectionModal";
 import "./CreateEvent.css";
+import { makeStyles } from "@material-ui/core/styles";
 export default function CreateEvent(props) {
+  const useStyles = makeStyles((theme) => ({
+    notchedOutline: {
+      borderWidth: "3px",
+      borderColor: "#3897f1 !important",
+      borderRadius: "150px",
+      color: "#3897f1 !important",
+    },
+  }));
+  const classes = useStyles();
   const [disablesave, setDisablesave] = useState(false);
   const onDrop = useCallback((acceptedFiles) => {
     // Do something with the files
   }, []);
 
-  const [processing, setProcessing] = useState(false);
+  const [erroring, seterroring] = useState(false);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     multiple: false,
@@ -50,60 +60,73 @@ export default function CreateEvent(props) {
   ]);
   return (
     <>
-      <FormControl variant="outlined" className="w-100-p">
-        <InputLabel htmlFor="outlined-age-native-simple">Types</InputLabel>
-        <Select
-          native
-          value={props.Type}
-          onChange={props.handleChange}
-          label="Types"
-          inputProps={{
-            id: "outlined-age-native-simple",
-          }}
-        >
-          <option aria-label="None" value="" />
-          <option value="Wedding">Wedding</option>
-          <option value="Birthday">Birthday</option>
-          <option value="Wedding Anniversary">Wedding Anniversary</option>
-          <option value="Get Together">Get Together</option>
-          <option value="Formal Event">Formal Event</option>
-        </Select>
-      </FormControl>
-      <div className="w-100-p grey">
-        <Grid container spacing={0}>
-          {" "}
-          <Grid item xs={false} sm={1} md={2} />
-          <Grid item xs={6} sm={6} md={6} className="tal p-t-15px ">
-            Number Of Events
-          </Grid>
-          <Grid item xs={6} sm={5} md={4}>
+      <Grid container spacing={0} className="m-0 p-0">
+        <Grid item xs={12} sm={6}>
+          <FormControl
+            variant="outlined"
+            className="w-100-p m-b-25px"
+            size="small"
+            variant="outlined"
+            InputProps={{
+              classes: {
+                notchedOutline: classes.notchedOutline,
+              },
+            }}
+          >
+            <span className="label">Type</span>
+            <Select
+              native
+              value={props.Type}
+              onChange={props.handleChange}
+              error={erroring}
+              className="selectboxblue"
+            >
+              <option value="Wedding">Wedding</option>
+              <option value="Birthday">Birthday</option>
+              <option value="Wedding Anniversary">Wedding Anniversary</option>
+              <option value="Get Together">Get Together</option>
+              <option value="Formal Event">Formal Event</option>
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <div className="noe">
             <Grid container spacing={0}>
-              <Grid item xs={12}>
-                <div className="Cirlce tar p-t-5 fl">
-                  <AddCircleOutlineIcon
-                    className="l-blue-t"
-                    fontSize="large"
-                    onClick={() => {
-                      props.addAnEvent();
-                    }}
-                  />
-                </div>
-                <div className="white box m-5px fl">{props.Events.length}</div>
-                <div className="Cirlce tal p-t-5 fl">
-                  <RemoveCircleOutlineIcon
-                    className="l-blue-t"
-                    fontSize="large"
-                    onClick={() => {
-                      props.removeAnEvent();
-                    }}
-                  />
-                </div>
+              {" "}
+              <Grid item xs={false} sm={1} md={2} />
+              <Grid item xs={6} sm={6} md={6} className="tal  mfs-12">
+                Number Of Events
+              </Grid>
+              <Grid item xs={6} sm={5} md={4}>
+                <Grid container spacing={0}>
+                  <Grid item xs={12}>
+                    <div className="Cirlce tar  fl">
+                      <AddCircleOutlineIcon
+                        className="l-blue-t"
+                        fontSize="large"
+                        onClick={() => {
+                          props.addAnEvent();
+                        }}
+                      />
+                    </div>
+                    <div className="white box  fl">{props.Events.length}</div>
+                    <div className="Cirlce tal  fl">
+                      <RemoveCircleOutlineIcon
+                        className="l-blue-t"
+                        fontSize="large"
+                        onClick={() => {
+                          props.removeAnEvent();
+                        }}
+                      />
+                    </div>
+                  </Grid>
+                </Grid>
               </Grid>
             </Grid>
-          </Grid>
+          </div>
         </Grid>
-      </div>
-      <div className="event-Names">
+      </Grid>
+      <div className="event-Names m-b-25px">
         <EventNameBox
           data={props.Events}
           setEvents={props.setEvents}
@@ -128,6 +151,8 @@ export default function CreateEvent(props) {
           Story={props.Story}
           template={props.template}
           handleNext={props.handleNext}
+          Type={props.Type}
+          seterroring={seterroring}
         />
       </Grid>
 

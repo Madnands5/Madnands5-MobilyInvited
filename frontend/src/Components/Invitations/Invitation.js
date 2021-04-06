@@ -4,7 +4,7 @@ import NoInv from "../../Assets/NoInvitation.svg";
 import "./Invitations.css";
 import LocationOnIcon from "@material-ui/icons/LocationOn";
 import LanguageIcon from "@material-ui/icons/Language";
-import NotificationsIcon from "@material-ui/icons/Notifications";
+import NotificationsNoneIcon from "@material-ui/icons/NotificationsNone";
 import NotificationsOffIcon from "@material-ui/icons/NotificationsOff";
 import InfoIcon from "@material-ui/icons/Info";
 import history from "../../Utils/History";
@@ -20,24 +20,32 @@ export default function Invitation(props) {
     return <img src={NoInv} className="nodata" />;
   }
   return (
-    <Grid container spacing={0} className="tac mb-100">
+    <Grid container spacing={0} className="mb-100">
       {data.map((inv, index) => (
-        <Grid item xs={12} sm={6} className="tac " key={index}>
-          <div className="invitaion">
-            <img className="card" src={inv[0].file} />
-            <Grid container spacing={0} className="tac tool-bar">
-              <Grid item xs={false} sm={1}></Grid>
-              <Grid item xs={4} sm={3}>
-                <Grid item xs={12} className="fs-bold l-blue-t">
-                  {inv[0].InvId.Type}
-                </Grid>
-                <Grid item xs={12} className="fs-small">
-                  {inv[0].Date} {inv[0].Time}
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          className="InvitationCard"
+          key={"InvitationCard" + index}
+        >
+          <img src={inv[0].file} className="inv-img" />
+          <NotificationsNoneIcon className="card-button Notifyme t-white" />
+          <div className="bottom-bar">
+            <Grid container spacing={0}>
+              <Grid item xs={8}>
+                <Grid container spacing={0} className="event-info">
+                  <Grid item xs={12} className="fs-bold t-white">
+                    {inv[0].InvId.Type}
+                  </Grid>
+                  <Grid item xs={12} className="fs-small t-white dt">
+                    {inv[0].Date} {inv[0].Time}
+                  </Grid>
                 </Grid>
               </Grid>
-              <Grid item xs={3} sm={3}>
+              <Grid item xs={2}>
                 <button
-                  className="rsvp-button"
+                  className="card-button rsvp-button "
                   onClick={() => {
                     history.push("/inv/" + "RSVP" + "/" + index);
                   }}
@@ -45,28 +53,13 @@ export default function Invitation(props) {
                   RSVP
                 </button>
               </Grid>
-
-              <Grid
-                item
-                xs={2}
-                title="notify Me"
-                className="tool-button l-blue-t"
-                onClick={() => {
-                  history.push("/inv/" + "info/" + index);
-                }}
-              >
-                <InfoIcon />
-              </Grid>
-              <Grid
-                item
-                xs={2}
-                title="notify Me"
-                className="tool-button l-blue-t"
-                onClick={() => {
-                  //togglenotigy
-                }}
-              >
-                <NotificationsIcon />
+              <Grid item xs={2} className="tac">
+                {inv[0].VenueType === "Online" ||
+                inv[0].VenueType === "Both" ? (
+                  <LanguageIcon className="t-white   mt-5px " />
+                ) : (
+                  <LocationOnIcon className="t-white  mt-5px " />
+                )}
               </Grid>
             </Grid>
           </div>

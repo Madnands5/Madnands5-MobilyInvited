@@ -13,17 +13,17 @@ export function saveEvent(edata) {
     console.log(edata);
     axios.post(url + "event/create", edata).then((res) => {
       console.log(res);
-      history.push("/home");
+      history.push("/MyEvents/event-create-success/" + res.data.Maincode);
     });
   };
 }
 
 export function GetEvents() {
   return (dispatch) => {
-    axios.get(url + "event/getamyEvents").then((res) => {
+    axios.get(url + "event/getmyEvents").then((res) => {
       dispatch({
         type: GOTMYEVENTS,
-        payload: res.data,
+        payload: res.data.MyEvents,
       });
     });
   };
@@ -34,7 +34,7 @@ export function GetInvitations() {
     axios.get(url + "event/getmyInvitaion").then((res) => {
       dispatch({
         type: GETMYINVITAITONS,
-        payload: res.data,
+        payload: res.data.Invitations,
       });
       console.log(res);
     });
